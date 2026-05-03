@@ -1,906 +1,1122 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;1,400&family=DM+Sans:wght@300;400;500&display=swap');
-
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-
-  .app {
-    font-family: 'DM Sans', sans-serif;
-    min-height: 100vh;
-    background: var(--color-background-tertiary);
-    display: flex;
-    flex-direction: column;
-    max-width: 420px;
-    margin: 0 auto;
-  }
-
-  .header {
-    padding: 1.25rem 1.5rem 1rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    border-bottom: 0.5px solid var(--color-border-tertiary);
-    background: var(--color-background-primary);
-  }
-
-  .logo {
-    font-family: 'Playfair Display', serif;
-    font-size: 20px;
-    color: var(--color-text-primary);
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .logo-icon {
-    width: 32px; height: 32px;
-    background: #1D9E75;
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 16px;
-  }
-
-  .badge {
-    font-size: 11px;
-    background: #E1F5EE;
-    color: #0F6E56;
-    padding: 3px 10px;
-    border-radius: 20px;
-    font-weight: 500;
-  }
-
-  .tabs {
-    display: flex;
-    background: var(--color-background-primary);
-    border-bottom: 0.5px solid var(--color-border-tertiary);
-    padding: 0 1rem;
-    gap: 4px;
-  }
-
-  .tab {
-    padding: 10px 14px;
-    font-size: 13px;
-    font-weight: 400;
-    color: var(--color-text-secondary);
-    cursor: pointer;
-    border-bottom: 2px solid transparent;
-    transition: all 0.2s;
-    white-space: nowrap;
-  }
-
-  .tab.active {
-    color: #0F6E56;
-    border-bottom-color: #1D9E75;
-    font-weight: 500;
-  }
-
-  .content { flex: 1; }
-
-  .screen { display: none; padding: 1.25rem; }
-  .screen.active { display: block; }
-
-  /* Camera Screen */
-  .camera-area {
-    background: #1a1a1a;
-    border-radius: 16px;
-    aspect-ratio: 3/4;
-    position: relative;
-    overflow: hidden;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    margin-bottom: 1rem;
-    border: 0.5px solid var(--color-border-secondary);
-  }
-
-  .camera-live {
-    width: 100%; height: 100%;
-    object-fit: cover;
-    position: absolute;
-    top: 0; left: 0;
-    display: none;
-    border-radius: 16px;
-  }
-
-  .cam-preview-img {
-    width: 100%; height: 100%;
-    object-fit: cover;
-    position: absolute;
-    top: 0; left: 0;
-    display: none;
-    border-radius: 16px;
-  }
-
-  .cam-overlay {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-    z-index: 2;
-  }
-
-  .cam-icon {
-    width: 60px; height: 60px;
-    border: 2px solid rgba(255,255,255,0.5);
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 28px;
-    background: rgba(0,0,0,0.3);
-  }
-
-  .cam-text {
-    color: rgba(255,255,255,0.8);
-    font-size: 14px;
-    text-align: center;
-    padding: 0 2rem;
-  }
-
-  .corner { position: absolute; width: 24px; height: 24px; border-color: #1D9E75; border-style: solid; }
-  .corner.tl { top: 16px; left: 16px; border-width: 2px 0 0 2px; border-radius: 4px 0 0 0; }
-  .corner.tr { top: 16px; right: 16px; border-width: 2px 2px 0 0; border-radius: 0 4px 0 0; }
-  .corner.bl { bottom: 16px; left: 16px; border-width: 0 0 2px 2px; border-radius: 0 0 0 4px; }
-  .corner.br { bottom: 16px; right: 16px; border-width: 0 2px 2px 0; border-radius: 0 0 4px 0; }
-
-  .scan-line {
-    position: absolute;
-    left: 12%; right: 12%;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, #1D9E75, transparent);
-    display: none;
-    animation: scan 2s ease-in-out infinite;
-  }
-
-  @keyframes scan {
-    0% { top: 15%; opacity: 0; }
-    10% { opacity: 1; }
-    90% { opacity: 1; }
-    100% { top: 85%; opacity: 0; }
-  }
-
-  .cam-actions {
-    display: flex;
-    gap: 12px;
-    margin-bottom: 1rem;
-  }
-
-  .btn-primary {
-    flex: 1;
-    padding: 13px;
-    background: #1D9E75;
-    color: white;
-    border: none;
-    border-radius: 12px;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    font-family: 'DM Sans', sans-serif;
-    transition: opacity 0.2s;
-  }
-
-  .btn-primary:hover { opacity: 0.9; }
-  .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
-
-  .btn-secondary {
-    padding: 13px 18px;
-    background: var(--color-background-secondary);
-    color: var(--color-text-primary);
-    border: 0.5px solid var(--color-border-secondary);
-    border-radius: 12px;
-    font-size: 14px;
-    font-weight: 400;
-    cursor: pointer;
-    font-family: 'DM Sans', sans-serif;
-    transition: background 0.2s;
-  }
-
-  .btn-secondary:hover { background: var(--color-background-tertiary); }
-
-  .tip-card {
-    background: var(--color-background-primary);
-    border: 0.5px solid var(--color-border-tertiary);
-    border-radius: 12px;
-    padding: 12px 14px;
-    display: flex;
-    gap: 10px;
-    align-items: flex-start;
-  }
-
-  .tip-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
-
-  .tip-text { font-size: 13px; color: var(--color-text-secondary); line-height: 1.5; }
-  .tip-text strong { color: var(--color-text-primary); font-weight: 500; }
-
-  /* Result Screen */
-  .result-card {
-    background: var(--color-background-primary);
-    border: 0.5px solid var(--color-border-tertiary);
-    border-radius: 16px;
-    overflow: hidden;
-    margin-bottom: 1rem;
-  }
-
-  .result-img-area {
-    height: 200px;
-    background: linear-gradient(135deg, #E1F5EE 0%, #9FE1CB 100%);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 72px;
-    position: relative;
-  }
-
-  .confidence-badge {
-    position: absolute;
-    top: 12px; right: 12px;
-    background: rgba(255,255,255,0.95);
-    border-radius: 20px;
-    padding: 4px 12px;
-    font-size: 12px;
-    font-weight: 500;
-    color: #0F6E56;
-    display: flex; align-items: center; gap: 4px;
-  }
-
-  .result-info { padding: 1rem 1.25rem; }
-
-  .flower-name {
-    font-family: 'Playfair Display', serif;
-    font-size: 24px;
-    color: var(--color-text-primary);
-    margin-bottom: 2px;
-  }
-
-  .flower-latin {
-    font-style: italic;
-    font-size: 13px;
-    color: var(--color-text-secondary);
-    margin-bottom: 14px;
-  }
-
-  .info-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    margin-bottom: 14px;
-  }
-
-  .info-item {
-    background: var(--color-background-secondary);
-    border-radius: 10px;
-    padding: 10px 12px;
-  }
-
-  .info-label { font-size: 11px; color: var(--color-text-secondary); margin-bottom: 3px; text-transform: uppercase; letter-spacing: 0.5px; }
-  .info-value { font-size: 14px; color: var(--color-text-primary); font-weight: 500; }
-
-  .desc-text {
-    font-size: 13px;
-    color: var(--color-text-secondary);
-    line-height: 1.7;
-    margin-bottom: 14px;
-  }
-
-  .tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    margin-bottom: 14px;
-  }
-
-  .tag {
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 400;
-    border: 0.5px solid;
-  }
-
-  .tag-green { background: #E1F5EE; color: #085041; border-color: #5DCAA5; }
-  .tag-coral { background: #FAECE7; color: #4A1B0C; border-color: #F0997B; }
-  .tag-purple { background: #EEEDFE; color: #26215C; border-color: #AFA9EC; }
-  .tag-amber { background: #FAEEDA; color: #412402; border-color: #EF9F27; }
-
-  .care-section {
-    border-top: 0.5px solid var(--color-border-tertiary);
-    padding: 12px 0 0;
-  }
-
-  .care-title {
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--color-text-primary);
-    margin-bottom: 10px;
-  }
-
-  .care-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
-  }
-
-  .care-item {
-    text-align: center;
-    background: var(--color-background-secondary);
-    border-radius: 10px;
-    padding: 10px 6px;
-  }
-
-  .care-emoji { font-size: 20px; margin-bottom: 4px; }
-  .care-label { font-size: 11px; color: var(--color-text-secondary); }
-  .care-val { font-size: 12px; font-weight: 500; color: var(--color-text-primary); }
-
-  /* Fun Features */
-  .fun-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    margin-bottom: 1rem;
-  }
-
-  .fun-card {
-    background: var(--color-background-primary);
-    border: 0.5px solid var(--color-border-tertiary);
-    border-radius: 14px;
-    padding: 16px 14px;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-
-  .fun-card:hover {
-    border-color: #1D9E75;
-    background: #E1F5EE;
-  }
-
-  .fun-icon { font-size: 28px; margin-bottom: 8px; }
-  .fun-name { font-size: 14px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 3px; }
-  .fun-desc { font-size: 12px; color: var(--color-text-secondary); line-height: 1.4; }
-
-  .fun-output {
-    background: var(--color-background-primary);
-    border: 0.5px solid var(--color-border-tertiary);
-    border-radius: 14px;
-    padding: 16px;
-    margin-top: 1rem;
-    display: none;
-  }
-
-  .fun-output.show { display: block; }
-
-  .fun-output-title {
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--color-text-primary);
-    margin-bottom: 10px;
-    display: flex; align-items: center; gap: 6px;
-  }
-
-  .fun-output-body {
-    font-size: 13px;
-    color: var(--color-text-secondary);
-    line-height: 1.7;
-  }
-
-  .lang-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-  }
-
-  .lang-item {
-    background: var(--color-background-secondary);
-    border-radius: 8px;
-    padding: 8px 12px;
-  }
-
-  .lang-name { font-size: 11px; color: var(--color-text-secondary); }
-  .lang-word { font-size: 14px; font-weight: 500; color: var(--color-text-primary); }
-
-  .myth-text {
-    font-style: italic;
-    font-family: 'Playfair Display', serif;
-    font-size: 15px;
-    color: var(--color-text-primary);
-    line-height: 1.7;
-    border-left: 3px solid #1D9E75;
-    padding-left: 12px;
-  }
-
-  .poem-text {
-    font-family: 'Playfair Display', serif;
-    font-style: italic;
-    font-size: 15px;
-    line-height: 2;
-    color: var(--color-text-primary);
-    text-align: center;
-  }
-
-  .scan-progress {
-    display: none;
-    text-align: center;
-    padding: 1.5rem;
-  }
-
-  .scan-progress.show { display: block; }
-
-  .progress-ring { width: 60px; height: 60px; margin: 0 auto 12px; }
-  .progress-text { font-size: 14px; color: var(--color-text-secondary); }
-
-  @keyframes spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-  }
-
-  .spinner {
-    width: 40px; height: 40px;
-    border: 3px solid var(--color-border-tertiary);
-    border-top-color: #1D9E75;
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-    margin: 0 auto 10px;
-  }
-
-  .hidden-input { display: none; }
-
-  /* Saved screen */
-  .saved-empty {
-    text-align: center;
-    padding: 3rem 2rem;
-    color: var(--color-text-secondary);
-  }
-
-  .saved-empty-icon { font-size: 48px; margin-bottom: 12px; opacity: 0.4; }
-  .saved-empty-text { font-size: 14px; }
-
-  .saved-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-  }
-
-  .saved-item {
-    background: var(--color-background-primary);
-    border: 0.5px solid var(--color-border-tertiary);
-    border-radius: 12px;
-    overflow: hidden;
-    cursor: pointer;
-    transition: border-color 0.2s;
-  }
-
-  .saved-item:hover { border-color: #1D9E75; }
-
-  .saved-thumb {
-    height: 100px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 40px;
-  }
-
-  .saved-label {
-    padding: 8px 10px;
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--color-text-primary);
-    border-top: 0.5px solid var(--color-border-tertiary);
-  }
-
-  .saved-date { font-size: 11px; color: var(--color-text-secondary); font-weight: 400; }
-
-  .status-dot {
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    background: #1D9E75;
-    display: inline-block;
-    margin-right: 4px;
-    animation: pulse 2s ease-in-out infinite;
-  }
-
-  @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.3; }
-  }
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;500;600&display=swap');
+
+*{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+--g1:#0a1a0f;--g2:#0f2a18;--g3:#1a3d25;
+--leaf:#2d7a4f;--leaf2:#4aaf7a;--leaf3:#7dd4a8;
+--gold:#c9a84c;--gold2:#e8c96a;
+--cream:#f0ede4;--cream2:#faf8f3;
+--text:#1a1a14;--text2:#4a4a3a;--text3:#8a8a7a;
+--accent:#e85d3a;
+}
+
+body{
+  font-family:'Outfit',sans-serif;
+  background:var(--g1);
+  min-height:100vh;
+  color:var(--cream);
+  overflow-x:hidden;
+}
+
+/* Animated background */
+.bg-anim{
+  position:fixed;inset:0;z-index:0;
+  background:radial-gradient(ellipse at 20% 50%,rgba(45,122,79,0.15) 0%,transparent 60%),
+    radial-gradient(ellipse at 80% 20%,rgba(74,175,122,0.1) 0%,transparent 50%),
+    radial-gradient(ellipse at 60% 80%,rgba(201,168,76,0.08) 0%,transparent 50%),
+    linear-gradient(135deg,var(--g1) 0%,var(--g2) 50%,var(--g1) 100%);
+}
+
+.particles{position:fixed;inset:0;z-index:0;overflow:hidden}
+.particle{
+  position:absolute;border-radius:50%;
+  animation:float linear infinite;
+  opacity:0;
+}
+@keyframes float{
+  0%{transform:translateY(100vh) rotate(0deg);opacity:0}
+  10%{opacity:0.6}
+  90%{opacity:0.3}
+  100%{transform:translateY(-10vh) rotate(720deg);opacity:0}
+}
+
+.app{position:relative;z-index:1;max-width:480px;margin:0 auto;min-height:100vh;padding:0 0 100px}
+
+/* Header */
+.header{
+  padding:1.5rem 1.5rem 1rem;
+  display:flex;align-items:center;justify-content:space-between;
+  border-bottom:1px solid rgba(74,175,122,0.15);
+}
+.logo{
+  font-family:'Cormorant Garamond',serif;
+  font-size:28px;font-weight:600;
+  background:linear-gradient(135deg,var(--leaf3),var(--gold2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  display:flex;align-items:center;gap:10px;
+}
+.logo-leaf{
+  width:36px;height:36px;
+  background:linear-gradient(135deg,var(--leaf),var(--leaf2));
+  border-radius:50% 10% 50% 10%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;
+  animation:leafPulse 3s ease-in-out infinite;
+  -webkit-text-fill-color:initial;
+}
+@keyframes leafPulse{
+  0%,100%{transform:scale(1) rotate(0deg)}
+  50%{transform:scale(1.05) rotate(5deg)}
+}
+.ai-badge{
+  font-family:'DM Mono',monospace;
+  font-size:10px;letter-spacing:1px;
+  background:rgba(45,122,79,0.2);
+  border:1px solid rgba(74,175,122,0.3);
+  color:var(--leaf3);
+  padding:4px 10px;border-radius:20px;
+  display:flex;align-items:center;gap:5px;
+}
+.pulse-dot{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--leaf2);
+  animation:pulseDot 2s ease-in-out infinite;
+}
+@keyframes pulseDot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.4;transform:scale(0.7)}}
+
+/* Nav tabs */
+.nav{
+  display:flex;
+  background:rgba(10,26,15,0.8);
+  border-bottom:1px solid rgba(74,175,122,0.1);
+  padding:0 1rem;gap:0;
+  position:sticky;top:0;z-index:10;
+  backdrop-filter:blur(20px);
+}
+.nav-tab{
+  flex:1;padding:12px 8px;
+  text-align:center;font-size:12px;font-weight:500;
+  color:var(--text3);cursor:pointer;
+  border-bottom:2px solid transparent;
+  transition:all 0.3s;
+  letter-spacing:0.5px;
+  text-transform:uppercase;
+}
+.nav-tab.active{color:var(--leaf3);border-bottom-color:var(--leaf2)}
+.nav-tab:hover:not(.active){color:var(--cream);border-bottom-color:rgba(74,175,122,0.3)}
+
+/* Screens */
+.screen{display:none;animation:fadeIn 0.4s ease}
+.screen.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* Camera screen */
+.camera-wrap{padding:1.5rem}
+
+.upload-zone{
+  position:relative;
+  border-radius:24px;
+  overflow:hidden;
+  aspect-ratio:4/5;
+  cursor:pointer;
+  border:1.5px solid rgba(74,175,122,0.3);
+  background:rgba(15,42,24,0.6);
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  transition:all 0.4s;
+  margin-bottom:1.5rem;
+}
+.upload-zone:hover{
+  border-color:rgba(74,175,122,0.6);
+  background:rgba(15,42,24,0.8);
+}
+
+.upload-zone img{
+  width:100%;height:100%;object-fit:cover;
+  position:absolute;inset:0;
+  border-radius:24px;
+}
+
+.scan-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(transparent 40%,rgba(10,26,15,0.7) 100%);
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  gap:12px;z-index:2;
+}
+
+.camera-icon-wrap{
+  width:72px;height:72px;
+  border-radius:50%;
+  border:2px solid rgba(74,175,122,0.4);
+  background:rgba(10,26,15,0.6);
+  display:flex;align-items:center;justify-content:center;
+  font-size:32px;
+  transition:all 0.3s;
+  backdrop-filter:blur(10px);
+}
+.upload-zone:hover .camera-icon-wrap{
+  border-color:var(--leaf2);
+  background:rgba(45,122,79,0.3);
+  transform:scale(1.05);
+}
+
+.upload-hint{
+  font-size:14px;color:rgba(240,237,228,0.6);
+  text-align:center;padding:0 2rem;
+  line-height:1.5;
+}
+
+/* Corner brackets */
+.bracket{position:absolute;width:30px;height:30px;border-color:var(--leaf2);border-style:solid;opacity:0.7}
+.bracket.tl{top:16px;left:16px;border-width:2px 0 0 2px;border-radius:4px 0 0 0}
+.bracket.tr{top:16px;right:16px;border-width:2px 2px 0 0;border-radius:0 4px 0 0}
+.bracket.bl{bottom:16px;left:16px;border-width:0 0 2px 2px;border-radius:0 0 0 4px}
+.bracket.br{bottom:16px;right:16px;border-width:0 2px 2px 0;border-radius:0 0 4px 0}
+
+/* Scan line animation */
+.scan-beam{
+  position:absolute;left:8%;right:8%;height:2px;
+  background:linear-gradient(90deg,transparent,var(--leaf2),var(--gold2),var(--leaf2),transparent);
+  display:none;z-index:3;
+  animation:scanBeam 2s ease-in-out infinite;
+  box-shadow:0 0 12px var(--leaf2);
+}
+@keyframes scanBeam{
+  0%{top:10%;opacity:0}5%{opacity:1}
+  95%{opacity:1}100%{top:90%;opacity:0}
+}
+
+/* Buttons */
+.btn-main{
+  width:100%;padding:16px;
+  background:linear-gradient(135deg,var(--leaf),var(--leaf2));
+  border:none;border-radius:16px;
+  color:white;font-family:'Outfit',sans-serif;
+  font-size:15px;font-weight:600;
+  cursor:pointer;letter-spacing:0.5px;
+  transition:all 0.3s;
+  position:relative;overflow:hidden;
+}
+.btn-main::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,0.1),transparent);
+  opacity:0;transition:opacity 0.3s;
+}
+.btn-main:hover::before{opacity:1}
+.btn-main:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(45,122,79,0.4)}
+.btn-main:active{transform:translateY(0)}
+.btn-main:disabled{opacity:0.5;cursor:not-allowed;transform:none}
+
+.btn-row{display:flex;gap:12px;margin-bottom:1rem}
+.btn-sec{
+  padding:14px 18px;
+  background:rgba(45,122,79,0.15);
+  border:1px solid rgba(74,175,122,0.3);
+  border-radius:14px;color:var(--leaf3);
+  font-family:'Outfit',sans-serif;font-size:14px;
+  cursor:pointer;transition:all 0.3s;
+  display:flex;align-items:center;gap:6px;
+}
+.btn-sec:hover{background:rgba(45,122,79,0.25);border-color:var(--leaf2)}
+
+/* Progress */
+.progress-wrap{
+  display:none;text-align:center;padding:2rem;
+  background:rgba(15,42,24,0.4);
+  border-radius:20px;border:1px solid rgba(74,175,122,0.15);
+  margin-bottom:1rem;
+}
+.progress-wrap.show{display:block;animation:fadeIn 0.3s ease}
+
+.spinner-ring{
+  width:56px;height:56px;
+  border-radius:50%;
+  border:3px solid rgba(74,175,122,0.15);
+  border-top-color:var(--leaf2);
+  border-right-color:var(--gold2);
+  animation:spin 1s linear infinite;
+  margin:0 auto 12px;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.progress-text{
+  font-family:'DM Mono',monospace;
+  font-size:13px;color:var(--leaf3);
+  letter-spacing:0.5px;
+}
+
+/* Info card */
+.info-strip{
+  background:rgba(15,42,24,0.4);
+  border:1px solid rgba(74,175,122,0.15);
+  border-radius:16px;padding:14px 16px;
+  display:flex;gap:12px;align-items:flex-start;
+}
+.info-icon{font-size:16px;flex-shrink:0;margin-top:2px}
+.info-text{font-size:13px;color:rgba(240,237,228,0.55);line-height:1.6}
+.info-text b{color:var(--leaf3);font-weight:500}
+
+/* API note */
+.api-note{
+  background:rgba(201,168,76,0.08);
+  border:1px solid rgba(201,168,76,0.2);
+  border-radius:14px;padding:14px 16px;
+  margin-top:1rem;
+}
+.api-note-title{
+  font-size:12px;font-weight:600;color:var(--gold2);
+  letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;
+}
+.api-note-text{font-size:13px;color:rgba(240,237,228,0.6);line-height:1.6}
+.api-link{color:var(--leaf3);text-decoration:underline;cursor:pointer}
+
+/* Result Screen */
+.result-wrap{padding:1.5rem}
+
+.result-hero{
+  border-radius:24px;overflow:hidden;
+  position:relative;margin-bottom:1.5rem;
+  border:1px solid rgba(74,175,122,0.2);
+}
+.result-hero-img{
+  width:100%;height:240px;object-fit:cover;
+  display:block;
+}
+.result-hero-emoji{
+  width:100%;height:240px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:80px;
+  background:linear-gradient(135deg,rgba(26,61,37,0.8),rgba(15,42,24,0.9));
+}
+.result-overlay{
+  position:absolute;bottom:0;left:0;right:0;
+  padding:1.5rem;
+  background:linear-gradient(transparent,rgba(10,26,15,0.95));
+}
+.result-name{
+  font-family:'Cormorant Garamond',serif;
+  font-size:30px;font-weight:600;color:white;
+  margin-bottom:4px;
+}
+.result-latin{
+  font-family:'Cormorant Garamond',serif;
+  font-style:italic;font-size:15px;
+  color:rgba(255,255,255,0.6);
+}
+.conf-pill{
+  position:absolute;top:16px;right:16px;
+  background:rgba(10,26,15,0.85);
+  backdrop-filter:blur(10px);
+  border:1px solid rgba(74,175,122,0.4);
+  border-radius:30px;padding:6px 14px;
+  font-family:'DM Mono',monospace;
+  font-size:12px;color:var(--leaf3);
+  display:flex;align-items:center;gap:6px;
+}
+.conf-bar{
+  width:8px;height:8px;border-radius:50%;
+  background:var(--leaf2);
+}
+
+/* Info grid */
+.info-grid{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:10px;margin-bottom:1rem;
+}
+.info-cell{
+  background:rgba(15,42,24,0.4);
+  border:1px solid rgba(74,175,122,0.12);
+  border-radius:14px;padding:12px 14px;
+}
+.cell-label{
+  font-size:10px;font-weight:600;letter-spacing:1px;
+  text-transform:uppercase;color:var(--text3);
+  margin-bottom:4px;
+}
+.cell-val{font-size:14px;font-weight:500;color:var(--cream)}
+
+.desc-block{
+  background:rgba(15,42,24,0.4);
+  border:1px solid rgba(74,175,122,0.12);
+  border-radius:16px;padding:16px;
+  margin-bottom:1rem;
+}
+.desc-block p{
+  font-size:14px;line-height:1.75;
+  color:rgba(240,237,228,0.75);
+}
+
+/* Tags */
+.tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:1rem}
+.tag{
+  padding:5px 14px;border-radius:30px;
+  font-size:12px;font-weight:500;letter-spacing:0.3px;
+  border:1px solid;
+}
+.tag-g{background:rgba(45,122,79,0.15);color:var(--leaf3);border-color:rgba(74,175,122,0.3)}
+.tag-a{background:rgba(201,168,76,0.12);color:var(--gold2);border-color:rgba(201,168,76,0.3)}
+.tag-r{background:rgba(232,93,58,0.12);color:#f0855a;border-color:rgba(232,93,58,0.3)}
+
+/* Care cards */
+.care-title{
+  font-size:11px;font-weight:600;letter-spacing:1px;
+  text-transform:uppercase;color:var(--text3);
+  margin-bottom:10px;
+}
+.care-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:1rem}
+.care-card{
+  background:rgba(15,42,24,0.4);
+  border:1px solid rgba(74,175,122,0.12);
+  border-radius:14px;padding:12px 8px;text-align:center;
+}
+.care-em{font-size:22px;margin-bottom:6px}
+.care-l{font-size:10px;color:var(--text3);letter-spacing:0.5px;text-transform:uppercase}
+.care-v{font-size:12px;font-weight:500;color:var(--cream);margin-top:2px}
+
+/* Action buttons */
+.action-row{display:flex;gap:10px;margin-bottom:1rem}
+.action-btn{
+  flex:1;padding:14px;
+  background:rgba(45,122,79,0.15);
+  border:1px solid rgba(74,175,122,0.25);
+  border-radius:14px;color:var(--leaf3);
+  font-family:'Outfit',sans-serif;font-size:13px;font-weight:500;
+  cursor:pointer;transition:all 0.3s;text-align:center;
+}
+.action-btn:hover{background:rgba(45,122,79,0.25);border-color:var(--leaf2)}
+.action-btn.primary{
+  background:linear-gradient(135deg,var(--leaf),var(--leaf2));
+  border-color:transparent;color:white;
+}
+.action-btn.primary:hover{opacity:0.9;transform:translateY(-1px)}
+
+/* Fun Screen */
+.fun-wrap{padding:1.5rem}
+.fun-header{
+  text-align:center;padding:1rem 0 1.5rem;
+}
+.fun-header h2{
+  font-family:'Cormorant Garamond',serif;
+  font-size:26px;font-weight:600;
+  background:linear-gradient(135deg,var(--leaf3),var(--gold2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  margin-bottom:6px;
+}
+.fun-header p{font-size:13px;color:var(--text3)}
+
+.fun-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1.5rem}
+.fun-card{
+  background:rgba(15,42,24,0.4);
+  border:1px solid rgba(74,175,122,0.12);
+  border-radius:18px;padding:18px 14px;
+  cursor:pointer;transition:all 0.35s;
+  position:relative;overflow:hidden;
+}
+.fun-card::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(45,122,79,0.15),transparent);
+  opacity:0;transition:opacity 0.3s;
+}
+.fun-card:hover{border-color:rgba(74,175,122,0.4);transform:translateY(-2px)}
+.fun-card:hover::before{opacity:1}
+.fun-em{font-size:26px;margin-bottom:10px}
+.fun-name{font-size:14px;font-weight:600;color:var(--cream);margin-bottom:4px}
+.fun-desc{font-size:12px;color:var(--text3);line-height:1.4}
+
+.fun-output{
+  background:rgba(15,42,24,0.5);
+  border:1px solid rgba(74,175,122,0.2);
+  border-radius:20px;padding:20px;
+  display:none;animation:slideUp 0.4s ease;
+}
+.fun-output.show{display:block}
+@keyframes slideUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+.fun-out-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:20px;color:var(--leaf3);
+  margin-bottom:14px;display:flex;align-items:center;gap:8px;
+}
+.fun-body{font-size:14px;color:rgba(240,237,228,0.7);line-height:1.8}
+.poem-line{
+  font-family:'Cormorant Garamond',serif;
+  font-style:italic;font-size:17px;
+  color:var(--cream);text-align:center;
+  line-height:2.2;
+}
+.myth-quote{
+  border-left:3px solid var(--leaf2);
+  padding-left:14px;
+  font-style:italic;
+  color:rgba(240,237,228,0.8);
+  line-height:1.9;
+}
+.lang-grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.lang-item{
+  background:rgba(10,26,15,0.5);
+  border-radius:10px;padding:10px 12px;
+}
+.lang-name2{font-size:10px;color:var(--text3);letter-spacing:0.5px;text-transform:uppercase}
+.lang-word2{font-size:15px;font-weight:500;color:var(--cream)}
+
+/* Saved Screen */
+.saved-wrap{padding:1.5rem}
+.saved-empty{
+  text-align:center;padding:4rem 2rem;
+  color:var(--text3);
+}
+.saved-empty-icon{
+  font-size:56px;margin-bottom:16px;
+  opacity:0.3;
+  animation:breathe 4s ease-in-out infinite;
+}
+@keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+.saved-empty-text{font-size:14px;line-height:1.7}
+
+.saved-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.saved-card{
+  background:rgba(15,42,24,0.4);
+  border:1px solid rgba(74,175,122,0.12);
+  border-radius:18px;overflow:hidden;
+  cursor:pointer;transition:all 0.3s;
+}
+.saved-card:hover{border-color:rgba(74,175,122,0.4);transform:translateY(-2px)}
+.saved-thumb{
+  height:110px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:44px;position:relative;overflow:hidden;
+}
+.saved-thumb img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
+.saved-info{padding:10px 12px;border-top:1px solid rgba(74,175,122,0.1)}
+.saved-name{font-size:14px;font-weight:500;color:var(--cream)}
+.saved-date{font-size:11px;color:var(--text3);margin-top:2px}
+
+/* How it works */
+.how-wrap{padding:1.5rem}
+.how-header{
+  text-align:center;padding:1rem 0 2rem;
+}
+.how-header h2{
+  font-family:'Cormorant Garamond',serif;
+  font-size:28px;font-weight:600;color:var(--cream);
+  margin-bottom:8px;
+}
+.how-header p{font-size:14px;color:var(--text3);line-height:1.6}
+
+.how-step{
+  display:flex;gap:16px;margin-bottom:1.5rem;
+  padding:18px;
+  background:rgba(15,42,24,0.4);
+  border:1px solid rgba(74,175,122,0.12);
+  border-radius:18px;
+}
+.step-num{
+  width:40px;height:40px;flex-shrink:0;
+  border-radius:50%;
+  background:linear-gradient(135deg,var(--leaf),var(--leaf2));
+  display:flex;align-items:center;justify-content:center;
+  font-family:'DM Mono',monospace;
+  font-size:14px;font-weight:500;color:white;
+}
+.step-content h3{font-size:15px;font-weight:600;color:var(--cream);margin-bottom:4px}
+.step-content p{font-size:13px;color:var(--text3);line-height:1.6}
+.step-content code{
+  font-family:'DM Mono',monospace;
+  font-size:11px;
+  background:rgba(45,122,79,0.2);
+  border:1px solid rgba(74,175,122,0.2);
+  color:var(--leaf3);
+  padding:2px 8px;border-radius:6px;
+  display:inline-block;margin-top:6px;
+}
+
+.api-setup{
+  background:rgba(201,168,76,0.08);
+  border:1px solid rgba(201,168,76,0.2);
+  border-radius:18px;padding:18px;
+  margin-bottom:1.5rem;
+}
+.api-setup-title{
+  font-size:11px;font-weight:600;letter-spacing:1px;
+  text-transform:uppercase;color:var(--gold2);margin-bottom:12px;
+}
+.api-step{
+  font-size:13px;color:rgba(240,237,228,0.65);
+  line-height:1.7;margin-bottom:6px;
+  padding-left:14px;position:relative;
+}
+.api-step::before{
+  content:'→';position:absolute;left:0;
+  color:var(--leaf3);
+}
+.api-link2{
+  color:var(--leaf3);text-decoration:underline;
+  cursor:pointer;
+}
+
+input[type=file]{display:none}
+input[type=text]{
+  width:100%;padding:12px 14px;
+  background:rgba(15,42,24,0.6);
+  border:1px solid rgba(74,175,122,0.25);
+  border-radius:12px;color:var(--cream);
+  font-family:'DM Mono',monospace;font-size:13px;
+  outline:none;transition:border-color 0.3s;
+  margin-bottom:10px;
+}
+input[type=text]:focus{border-color:var(--leaf2)}
+input[type=text]::placeholder{color:var(--text3)}
 </style>
 
-<h2 class="sr-only">FloriQ – Flower Scanner App with camera, AI identification, care tips, fun features, and saved flowers</h2>
-
-<input type="file" id="fileInput" class="hidden-input" accept="image/*" capture="environment">
+<div class="bg-anim"></div>
+<div class="particles" id="particles"></div>
 
 <div class="app">
   <div class="header">
     <div class="logo">
-      <div class="logo-icon">🌸</div>
-      FloriQ
+      <div class="logo-leaf">🌿</div>
+      FloraIQ
     </div>
-    <div class="badge"><span class="status-dot"></span>AI Ready</div>
+    <div class="ai-badge">
+      <div class="pulse-dot"></div>
+      ML ACTIVE
+    </div>
   </div>
 
-  <div class="tabs">
-    <div class="tab active" onclick="switchTab('camera')">Camera</div>
-    <div class="tab" onclick="switchTab('result')">Results</div>
-    <div class="tab" onclick="switchTab('fun')">Fun</div>
-    <div class="tab" onclick="switchTab('saved')">Saved</div>
+  <div class="nav">
+    <div class="nav-tab active" onclick="goTab('camera')">📷 Scan</div>
+    <div class="nav-tab" onclick="goTab('result')">🌱 Result</div>
+    <div class="nav-tab" onclick="goTab('fun')">✨ Fun</div>
+    <div class="nav-tab" onclick="goTab('saved')">💾 Saved</div>
+    <div class="nav-tab" onclick="goTab('how')">⚙️ Setup</div>
   </div>
 
-  <div class="content">
+  <!-- CAMERA SCREEN -->
+  <div id="s-camera" class="screen active">
+    <div class="camera-wrap">
 
-    <!-- Camera Tab -->
-    <div id="screen-camera" class="screen active">
-      <div class="camera-area" id="cameraArea" onclick="triggerCamera()">
-        <video id="liveVideo" class="camera-live" autoplay playsinline muted></video>
-        <img id="previewImg" class="cam-preview-img" />
-        <div class="cam-overlay" id="camOverlay">
-          <div class="cam-icon">📷</div>
-          <div class="cam-text">Flower ki tasveer lo ya gallery se chunen</div>
+      <div class="api-note" style="margin-bottom:1rem">
+        <div class="api-note-title">🔑 API Key Required</div>
+        <div class="api-note-text">
+          Real ML detection ke liye <b>Plant.id API</b> use hoti hai. 
+          Free key ke liye <span class="api-link" onclick="openLink('https://web.plant.id/')">web.plant.id</span> par jayen. 
+          Neeche Setup tab mein key enter karein ya abhi test mode mein try karein.
         </div>
-        <div class="corner tl"></div>
-        <div class="corner tr"></div>
-        <div class="corner bl"></div>
-        <div class="corner br"></div>
-        <div class="scan-line" id="scanLine"></div>
       </div>
 
-      <div id="scanProgress" class="scan-progress">
-        <div class="spinner"></div>
-        <div class="progress-text" id="progressText">Flower pehchaan raha hoon...</div>
+      <input type="text" id="apiKeyInput" placeholder="Plant.id API key yahaan paste karein (optional)" />
+
+      <input type="file" id="fileIn" accept="image/*" capture="environment">
+
+      <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileIn').click()">
+        <img id="previewImg" style="display:none;border-radius:24px;" />
+        <div class="scan-overlay" id="scanOverlay">
+          <div class="camera-icon-wrap">📷</div>
+          <div class="upload-hint">Flower ya plant ki tasveer len<br><span style="font-size:12px;opacity:0.6">Camera ya gallery se</span></div>
+        </div>
+        <div class="bracket tl"></div>
+        <div class="bracket tr"></div>
+        <div class="bracket bl"></div>
+        <div class="bracket br"></div>
+        <div class="scan-beam" id="scanBeam"></div>
       </div>
 
-      <div class="cam-actions">
-        <button class="btn-primary" id="scanBtn" onclick="startScan()">Flower Scan Karo</button>
-        <button class="btn-secondary" onclick="triggerCamera()">📁</button>
+      <div id="progressDiv" class="progress-wrap">
+        <div class="spinner-ring"></div>
+        <div class="progress-text" id="progressTxt">AI tayyar ho rahi hai...</div>
       </div>
 
-      <div class="tip-card">
-        <div class="tip-icon">💡</div>
-        <div class="tip-text">
-          <strong>Best results ke liye:</strong> Flower ke kareeb jayen aur acchi roshni mein tasveer len. Camera button dabane se gallery khulegi.
+      <div class="btn-row">
+        <button class="btn-main" style="flex:1" id="scanBtn" onclick="startScan()">🔍 Plant Identify Karo</button>
+        <button class="btn-sec" onclick="document.getElementById('fileIn').click()">📁</button>
+      </div>
+
+      <div class="info-strip">
+        <div class="info-icon">💡</div>
+        <div class="info-text">
+          <b>Best results:</b> Flower ya patti ko center mein rakhein, acchi roshni mein. 
+          Real-time ML model 20,000+ plants ko pehchan sakta hai.
         </div>
       </div>
     </div>
+  </div>
 
-    <!-- Result Tab -->
-    <div id="screen-result" class="screen">
-      <div id="resultEmpty" style="text-align:center; padding:3rem 2rem; color: var(--color-text-secondary);">
-        <div style="font-size:48px; margin-bottom:12px;">🔍</div>
-        <div style="font-size:14px;">Pehle camera se flower scan karen</div>
+  <!-- RESULT SCREEN -->
+  <div id="s-result" class="screen">
+    <div class="result-wrap">
+      <div id="resultEmpty" style="text-align:center;padding:4rem 2rem;color:var(--text3)">
+        <div style="font-size:56px;margin-bottom:16px;opacity:0.3">🔬</div>
+        <div style="font-size:14px;line-height:1.7">Pehle Scan tab mein<br>plant ki tasveer lein</div>
       </div>
-
-      <div id="resultContent" style="display:none;">
-        <div class="result-card">
-          <div class="result-img-area" id="resultImgArea">
-            <img id="resultImg" style="width:100%;height:100%;object-fit:cover;display:none;" />
-            <span id="resultEmoji">🌹</span>
-            <div class="confidence-badge" id="confBadge">✓ 96% match</div>
+      <div id="resultMain" style="display:none">
+        <div class="result-hero">
+          <div id="heroImgWrap"></div>
+          <div class="result-overlay">
+            <div class="result-name" id="rName">—</div>
+            <div class="result-latin" id="rLatin">—</div>
           </div>
-          <div class="result-info">
-            <div class="flower-name" id="flowerName">Rose</div>
-            <div class="flower-latin" id="flowerLatin">Rosa × hybrida</div>
-            <div class="info-grid" id="infoGrid"></div>
-            <div class="desc-text" id="descText"></div>
-            <div class="tags" id="tagsList"></div>
-            <div class="care-section">
-              <div class="care-title">Parwarish ka tariqa</div>
-              <div class="care-grid" id="careGrid"></div>
-            </div>
+          <div class="conf-pill" id="confPill">
+            <div class="conf-bar"></div>
+            <span id="confTxt">—</span>
           </div>
         </div>
-        <div style="display:flex; gap:10px;">
-          <button class="btn-primary" onclick="saveFlower()">Mehfooz Karo</button>
-          <button class="btn-secondary" style="flex:1;" onclick="switchTab('fun')">Mazedaar Features ✨</button>
+        <div class="info-grid" id="infoGrid"></div>
+        <div class="desc-block"><p id="rDesc">—</p></div>
+        <div class="tags" id="rTags"></div>
+        <div class="care-title">🌿 Parwarish Ka Tariqa</div>
+        <div class="care-row" id="careRow"></div>
+        <div class="action-row">
+          <div class="action-btn primary" onclick="saveIt()">💾 Save Karo</div>
+          <div class="action-btn" onclick="goTab('fun')">✨ Fun Mode</div>
+        </div>
+        <div id="rawApiResult" class="desc-block" style="display:none">
+          <div style="font-size:10px;font-weight:600;letter-spacing:1px;color:var(--leaf3);text-transform:uppercase;margin-bottom:8px">API Raw Result</div>
+          <pre id="rawPre" style="font-family:'DM Mono',monospace;font-size:11px;color:rgba(240,237,228,0.5);white-space:pre-wrap;word-break:break-all"></pre>
         </div>
       </div>
     </div>
+  </div>
 
-    <!-- Fun Tab -->
-    <div id="screen-fun" class="screen">
-      <div id="funNoFlower" style="text-align:center;padding:2rem 1.5rem;color:var(--color-text-secondary);display:none;">
-        <div style="font-size:40px;margin-bottom:10px;">🌿</div>
-        <div style="font-size:14px;">Pehle ek flower scan karen, phir yahan aayen!</div>
+  <!-- FUN SCREEN -->
+  <div id="s-fun" class="screen">
+    <div class="fun-wrap">
+      <div class="fun-header">
+        <h2>Mazedaar Features ✨</h2>
+        <p id="funSubtitle">Pehle ek plant scan karein</p>
       </div>
-
-      <div id="funGrid" class="fun-grid">
-        <div class="fun-card" onclick="showFun('poem')">
-          <div class="fun-icon">📝</div>
-          <div class="fun-name">Nazm Likho</div>
-          <div class="fun-desc">Is flower par ek khoobsurat urdu/hindi nazm</div>
-        </div>
-        <div class="fun-card" onclick="showFun('myth')">
-          <div class="fun-icon">🏛️</div>
-          <div class="fun-name">Kissey Kahani</div>
-          <div class="fun-desc">Purani daastanon mein is flower ka zikar</div>
-        </div>
-        <div class="fun-card" onclick="showFun('langs')">
-          <div class="fun-icon">🌍</div>
-          <div class="fun-name">Duniya ki Zubanen</div>
-          <div class="fun-desc">Alag zubanen mein is flower ka naam</div>
-        </div>
-        <div class="fun-card" onclick="showFun('quiz')">
-          <div class="fun-icon">🎯</div>
-          <div class="fun-name">Flower Quiz</div>
-          <div class="fun-desc">Is flower ke baare mein kitna jaante hain aap?</div>
-        </div>
-        <div class="fun-card" onclick="showFun('zodiac')">
-          <div class="fun-icon">⭐</div>
-          <div class="fun-name">Zodyak Match</div>
-          <div class="fun-desc">Kaun sa zodyak is flower se milta hai?</div>
-        </div>
-        <div class="fun-card" onclick="showFun('gift')">
-          <div class="fun-icon">🎁</div>
-          <div class="fun-name">Gift Guide</div>
-          <div class="fun-desc">Kise aur kab gift karen ye flower?</div>
-        </div>
+      <div class="fun-grid">
+        <div class="fun-card" onclick="funAct('poem')"><div class="fun-em">📜</div><div class="fun-name">Shayari</div><div class="fun-desc">Is plant par khoobsurat nazm</div></div>
+        <div class="fun-card" onclick="funAct('myth')"><div class="fun-em">🏺</div><div class="fun-name">Purani Kahani</div><div class="fun-desc">Taareekhi afsaney aur legends</div></div>
+        <div class="fun-card" onclick="funAct('langs')"><div class="fun-em">🌍</div><div class="fun-name">8 Zubanen</div><div class="fun-desc">Duniya bhar mein naam</div></div>
+        <div class="fun-card" onclick="funAct('quiz')"><div class="fun-em">🎯</div><div class="fun-name">Quiz</div><div class="fun-desc">Apni jankari azmaayein</div></div>
+        <div class="fun-card" onclick="funAct('zodiac')"><div class="fun-em">⭐</div><div class="fun-name">Zodyak</div><div class="fun-desc">Star sign match</div></div>
+        <div class="fun-card" onclick="funAct('recipe')"><div class="fun-em">🍵</div><div class="fun-name">Nuska / Recipe</div><div class="fun-desc">Khaane ya dawa mein use</div></div>
       </div>
-
-      <div id="funOutput" class="fun-output">
-        <div class="fun-output-title" id="funTitle"></div>
-        <div id="funLoading" style="display:none;text-align:center;padding:1rem;"><div class="spinner"></div></div>
-        <div class="fun-output-body" id="funBody"></div>
+      <div id="funOut" class="fun-output">
+        <div class="fun-out-title" id="funOutTitle"></div>
+        <div id="funSpin" style="display:none;text-align:center;padding:1rem"><div class="spinner-ring" style="width:36px;height:36px;border-width:2px"></div></div>
+        <div id="funOutBody"></div>
       </div>
     </div>
+  </div>
 
-    <!-- Saved Tab -->
-    <div id="screen-saved" class="screen">
+  <!-- SAVED SCREEN -->
+  <div id="s-saved" class="screen">
+    <div class="saved-wrap">
       <div id="savedEmpty" class="saved-empty">
         <div class="saved-empty-icon">🌱</div>
-        <div class="saved-empty-text">Aapka flower garden khali hai. Scan karke yahan save karen!</div>
+        <div class="saved-empty-text">Aapka botanical garden<br>abhi khali hai.<br><br>Plants scan karke yahan<br>mehfooz karein!</div>
       </div>
-      <div id="savedGrid" class="saved-grid" style="display:none;"></div>
+      <div id="savedGrid" class="saved-grid" style="display:none"></div>
     </div>
+  </div>
 
+  <!-- HOW IT WORKS / SETUP -->
+  <div id="s-how" class="screen">
+    <div class="how-wrap">
+      <div class="how-header">
+        <h2>⚙️ Setup Guide</h2>
+        <p>Real ML detection ke liye Plant.id API setup karein</p>
+      </div>
+
+      <div class="api-setup">
+        <div class="api-setup-title">🔑 Free API Key Kaise Milegi</div>
+        <div class="api-step">Web.plant.id par jayen: <span class="api-link2" onclick="openLink('https://web.plant.id/')">web.plant.id</span></div>
+        <div class="api-step">Free account banayein (email se)</div>
+        <div class="api-step">Dashboard → API Keys → Create New Key</div>
+        <div class="api-step">Key copy karein aur Scan tab mein paste karein</div>
+        <div class="api-step">Free plan: 100 identifications/month</div>
+      </div>
+
+      <div class="how-step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <h3>Tasveer Upload</h3>
+          <p>Camera ya gallery se flower/plant ki tasveer lein. App seedha base64 mein convert karta hai.</p>
+        </div>
+      </div>
+
+      <div class="how-step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <h3>Plant.id ML API</h3>
+          <p>Tasveer Plant.id ke AI server par jaati hai jo 20,000+ plant species ko pehchanta hai.</p>
+          <code>POST api.plant.id/v2/identify</code>
+        </div>
+      </div>
+
+      <div class="how-step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <h3>Wikipedia Data</h3>
+          <p>Plant identify hone ke baad Wikipedia API se detailed information fetch hoti hai automatically.</p>
+          <code>GET en.wikipedia.org/api/rest_v1/</code>
+        </div>
+      </div>
+
+      <div class="how-step">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <h3>Results Display</h3>
+          <p>Confidence score, scientific name, common names, aur care tips — sab real data se.</p>
+        </div>
+      </div>
+
+      <div class="how-step">
+        <div class="step-num">5</div>
+        <div class="step-content">
+          <h3>Test Mode</h3>
+          <p>API key ke bina bhi app test kar sakte hain — demo data se sab features dekhein.</p>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
 <script>
-let currentFlower = null;
-let savedFlowers = [];
-let isScanning = false;
-let capturedImageData = null;
+let currentPlant = null;
+let savedPlants = [];
+let capturedImg = null;
 
-const flowers = [
-  {
-    name: "Rose", latin: "Rosa × hybrida", emoji: "🌹",
-    family: "Rosaceae", origin: "Asia", season: "Bahar", color: "Surkh",
-    desc: "Gulab duniya ka sabse mashoor phool hai. Muhabbat aur khoobsurati ka nishaan, ye phool hazaaron salon se shayari aur adab mein jagah pata raha hai.",
-    tags: ["Khushbu dar", "Muhabbat", "Dekh bhal aasan", "Kante hain"],
-    care: [{e:"☀️",l:"Dhoop",v:"6+ ghante"},{e:"💧",l:"Paani",v:"3x hafte"},{e:"🌡️",l:"Garmi",v:"15-25°C"}],
-    poem: "Gulab ki patti mein chupta hai raaz,\nMuhabbat ki khushbu ka andaaz.\nKante hain par phir bhi haseen,\nJaise zindagi ka ek naya wiraaz.",
-    myth: "Yunan ki kahani mein Aphrodite, muhabbat ki devi, apne aashiq Adonis ki yaad mein rote rote gulab ugati thi. Har tufaan mein gulab ki petian bikhar jaati theen — jaise aansu zameen pe gir ke phool ban jayen. Isliye gulab ko 'Dil ka Zaban' kaha jata hai.",
-    langs: [{l:"Farsi",w:"گل سرخ – Gul-e-Surkh"},{l:"French",w:"La Rose"},{l:"Arabic",w:"وردة – Warda"},{l:"Italian",w:"La Rosa"},{l:"Japanese",w:"薔薇 – Bara"},{l:"German",w:"Die Rose"}],
-    zodiac: "♉ Taurus – Pyar aur hasin chezon ka razi. Gulab bilkul Taurus jaisa hai: zabardast, khushbu dar, aur dil ko chu lene wala.",
-    gift: "Rose ek perfect gift hai valentines par, maaon ke liye, ya kisi aziz ko khush karne ke liye. Laal gulab muhabbat, safed gulab paaki aur gulaabi rang dosti ki alamat hai.",
-    confidence: "96%", tagClasses: ["tag-green","tag-coral","tag-green","tag-amber"]
-  },
-  {
-    name: "Sunflower", latin: "Helianthus annuus", emoji: "🌻",
-    family: "Asteraceae", origin: "America", season: "Garmiyan", color: "Zard",
-    desc: "Surajmukhi – jo suraj ki taraf munh karta hai. Ye phool khushi, umeed aur taqat ka nishaan hai. Iski peeli patian zindagi ki roshni ki tarah chamakti hain.",
-    tags: ["Dhoop chahiye", "Khushi", "Uzra beej", "Tall qad"],
-    care: [{e:"☀️",l:"Dhoop",v:"Poori dhoop"},{e:"💧",l:"Paani",v:"Hafte mein"},{e:"📏",l:"Qad",v:"2-3 meter"}],
-    poem: "Surajmukhi roz suraj se milne jaata hai,\nHar subah nayi umeed ka payam laata hai.\nZard patian jaise sona bikhar gaya ho,\nKhushi ke rang mein jahan naha gaya ho.",
-    myth: "Aztec tamaddun mein surajmukhi Inti – suraj ke deva – ka muqaddas phool tha. Dehkaan apni dhalon par ye phool ugate aur sun deva ko khush rakhne ke liye nazrana dete. Ek kahani ke mutabiq, ek jawaan nain ne ek ghante tak suraj ko takha – aur wahin surajmukhi ban gayi.",
-    langs: [{l:"Spanish",w:"El Girasol"},{l:"French",w:"Le Tournesol"},{l:"Arabic",w:"عباد الشمس"},{l:"Italian",w:"Il Girasole"},{l:"Japanese",w:"向日葵 – Himawari"},{l:"German",w:"Die Sonnenblume"}],
-    zodiac: "♌ Leo – Suraj ki tarah chamakne wala. Surajmukhi Leo ki tarah bold, khushi phailane wala aur hamesha roshni ki taraf badhne wala hai.",
-    gift: "Sunflower doston ko dene ka sab se acha phool hai. Naye ghar mein jaate waqt, graduation par, ya kisi ko motivation dena ho toh ye perfect hai!",
-    confidence: "94%", tagClasses: ["tag-amber","tag-amber","tag-green","tag-green"]
-  },
-  {
-    name: "Lotus", latin: "Nelumbo nucifera", emoji: "🪷",
-    family: "Nelumbonaceae", origin: "Asia", season: "Garmiyan", color: "Gulaabi/Safed",
-    desc: "Kamal – jo keechad mein ugkar bhi paak reh ta hai. Hindustan ka qaumi phool aur pakeeza zindagi ka nishaan. Iske baare mein aik khoobsurat kehawat hai: 'Keechad mein khilta hai, par keechad se unchha rehta hai'.",
-    tags: ["Paani mein ugta", "Muqaddas", "Raat ko band", "Keechad mein"],
-    care: [{e:"☀️",l:"Dhoop",v:"Poori dhoop"},{e:"💧",l:"Paani",v:"Hamesha pani mein"},{e:"🌡️",l:"Garmi",v:"20-30°C"}],
-    poem: "Keechad mein ug ke bhi paak raha hoon main,\nTaklif mein bhi muskurata raha hoon main.\nKamal hun, duniya ki gard mujhe chhu na sayi,\nMitti se nikle bhi, akela hi raha hoon main.",
-    myth: "Hindu afsane mein Brahma – khaliq devta – kamal ke phool par baitha hai. Lakshmi devi bhi kamal par hai. Yahi wajah hai ke kamal paaki, samridhi aur ruhani baidari ka nishaan hai. Egypt mein bhi kamal maut ke baad naye janam ki alamat tha.",
-    langs: [{l:"Hindi",w:"कमल – Kamal"},{l:"Sanskrit",w:"पद्म – Padma"},{l:"Arabic",w:"لوتس – Lotus"},{l:"Japanese",w:"蓮 – Hasu"},{l:"Chinese",w:"荷花 – Héhuā"},{l:"French",w:"Le Lotus"}],
-    zodiac: "♓ Pisces – Roohaniyat aur gehri soch wale. Kamal Pisces ki tarah hai: paani mein rehta hai, mushkilon mein bhi khilta hai, aur duniya se alag ek alag hi duniya mein rehta hai.",
-    gift: "Kamal ka phool ya iski tasveer unhe dijiye jo mushkilon se guzar rahe hain – ye umeed ka paigham hai. Meditation aur yoga ki shaukeen ko bhi ye perfect gift hai.",
-    confidence: "98%", tagClasses: ["tag-purple","tag-purple","tag-green","tag-coral"]
+function openLink(url){window.open(url,'_blank')}
+
+// Particles
+(function(){
+  const p=document.getElementById('particles');
+  const colors=['rgba(74,175,122,0.4)','rgba(45,122,79,0.3)','rgba(201,168,76,0.3)','rgba(125,212,168,0.2)'];
+  for(let i=0;i<18;i++){
+    const el=document.createElement('div');
+    el.className='particle';
+    const size=Math.random()*6+3;
+    el.style.cssText=`width:${size}px;height:${size}px;left:${Math.random()*100}%;background:${colors[i%colors.length]};animation-duration:${Math.random()*20+15}s;animation-delay:${Math.random()*15}s`;
+    p.appendChild(el);
   }
-];
+})();
 
-function switchTab(tab) {
-  document.querySelectorAll('.tab').forEach((t,i) => {
-    const tabs = ['camera','result','fun','saved'];
-    t.classList.toggle('active', tabs[i] === tab);
+function goTab(t){
+  document.querySelectorAll('.nav-tab').forEach((el,i)=>{
+    const tabs=['camera','result','fun','saved','how'];
+    el.classList.toggle('active',tabs[i]===t);
   });
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById('screen-' + tab).classList.add('active');
-
-  if (tab === 'fun') checkFunReady();
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('s-'+t).classList.add('active');
+  if(t==='fun')updateFunSubtitle();
+  if(t==='saved')renderSaved();
 }
 
-function triggerCamera() {
-  document.getElementById('fileInput').click();
-}
-
-document.getElementById('fileInput').addEventListener('change', function(e) {
-  const file = e.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = function(ev) {
-    capturedImageData = ev.target.result;
-    const preview = document.getElementById('previewImg');
-    preview.src = capturedImageData;
-    preview.style.display = 'block';
-    document.getElementById('camOverlay').style.display = 'none';
-    document.getElementById('scanBtn').disabled = false;
+document.getElementById('fileIn').addEventListener('change',function(e){
+  const file=e.target.files[0];
+  if(!file)return;
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    capturedImg=ev.target.result;
+    const img=document.getElementById('previewImg');
+    img.src=capturedImg;img.style.display='block';
+    document.getElementById('scanOverlay').style.opacity='0.2';
   };
   reader.readAsDataURL(file);
-  this.value = '';
+  this.value='';
 });
 
-function startScan() {
-  if (isScanning) return;
-  isScanning = true;
+const progressMsgs=[
+  'Tasveer analyze ho rahi hai...',
+  'Neural network process kar raha hai...',
+  'Plant features extract ho rahe hain...',
+  'Species database check ho rahi hai...',
+  'Wikipedia se data fetch ho raha hai...',
+  'Confidence score calculate ho raha hai...',
+  'Nataij tayyar ho rahe hain...'
+];
 
-  document.getElementById('scanLine').style.display = 'block';
-  document.getElementById('scanProgress').classList.add('show');
-  document.getElementById('scanBtn').disabled = true;
+async function startScan(){
+  if(!capturedImg){alert('Pehle tasveer lein! 📷');return;}
+  const apiKey=document.getElementById('apiKeyInput').value.trim();
+  
+  document.getElementById('scanBeam').style.display='block';
+  document.getElementById('progressDiv').classList.add('show');
+  document.getElementById('scanBtn').disabled=true;
+  
+  let pi=0;
+  const pInt=setInterval(()=>{
+    document.getElementById('progressTxt').textContent=progressMsgs[pi%progressMsgs.length];
+    pi++;
+  },900);
 
-  const msgs = ["Flower pehchaan raha hoon...", "Features analyze ho rahi hain...", "Database se milaa raha hoon...", "Nataij tayyar ho rahe hain..."];
-  let i = 0;
-  const interval = setInterval(() => {
-    document.getElementById('progressText').textContent = msgs[i % msgs.length];
-    i++;
-  }, 800);
-
-  setTimeout(() => {
-    clearInterval(interval);
-    isScanning = false;
-    document.getElementById('scanLine').style.display = 'none';
-    document.getElementById('scanProgress').classList.remove('show');
-    document.getElementById('scanBtn').disabled = false;
-
-    currentFlower = flowers[Math.floor(Math.random() * flowers.length)];
-    showResult();
-  }, 3200);
-}
-
-function showResult() {
-  populateResult(currentFlower);
-  switchTab('result');
-}
-
-function populateResult(f) {
-  document.getElementById('resultEmpty').style.display = 'none';
-  document.getElementById('resultContent').style.display = 'block';
-
-  if (capturedImageData) {
-    document.getElementById('resultImg').src = capturedImageData;
-    document.getElementById('resultImg').style.display = 'block';
-    document.getElementById('resultEmoji').style.display = 'none';
-  } else {
-    document.getElementById('resultImg').style.display = 'none';
-    document.getElementById('resultEmoji').style.display = 'block';
-    document.getElementById('resultEmoji').textContent = f.emoji;
+  try{
+    let plantData;
+    if(apiKey){
+      plantData=await identifyWithPlantId(apiKey,capturedImg);
+    } else {
+      await new Promise(r=>setTimeout(r,3500));
+      plantData=getDemoPlant();
+    }
+    currentPlant=plantData;
+    renderResult(plantData);
+    goTab('result');
+  } catch(err){
+    alert('Error: '+err.message+'\n\nTest mode mein try karein (API key khali chhoren)');
+  } finally {
+    clearInterval(pInt);
+    document.getElementById('scanBeam').style.display='none';
+    document.getElementById('progressDiv').classList.remove('show');
+    document.getElementById('scanBtn').disabled=false;
   }
-
-  document.getElementById('confBadge').textContent = '✓ ' + f.confidence + ' match';
-  document.getElementById('flowerName').textContent = f.name;
-  document.getElementById('flowerLatin').textContent = f.latin;
-  document.getElementById('descText').textContent = f.desc;
-
-  const infoGrid = document.getElementById('infoGrid');
-  infoGrid.innerHTML = [
-    ['Khandan','family'],['Mulk','origin'],['Mausam','season'],['Rang','color']
-  ].map(([l,k]) => `<div class="info-item"><div class="info-label">${l}</div><div class="info-value">${f[k]}</div></div>`).join('');
-
-  const tagsList = document.getElementById('tagsList');
-  tagsList.innerHTML = f.tags.map((t,i) => `<span class="tag ${f.tagClasses[i]}">${t}</span>`).join('');
-
-  const careGrid = document.getElementById('careGrid');
-  careGrid.innerHTML = f.care.map(c => `<div class="care-item"><div class="care-emoji">${c.e}</div><div class="care-label">${c.l}</div><div class="care-val">${c.v}</div></div>`).join('');
 }
 
-function checkFunReady() {
-  const noFlower = document.getElementById('funNoFlower');
-  const grid = document.getElementById('funGrid');
-  if (!currentFlower) {
-    noFlower.style.display = 'block';
-    grid.style.display = 'none';
-  } else {
-    noFlower.style.display = 'none';
-    grid.style.display = 'grid';
+async function identifyWithPlantId(apiKey, imgData){
+  const base64=imgData.split(',')[1];
+  
+  const resp=await fetch('https://api.plant.id/v2/identify',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','Api-Key':apiKey},
+    body:JSON.stringify({
+      images:[base64],
+      plant_details:['common_names','url','wiki_description','taxonomy','synonyms'],
+      plant_language:'en',
+      modifiers:['crops_fast','similar_images']
+    })
+  });
+  
+  if(!resp.ok){
+    const err=await resp.json();
+    throw new Error(err.message||'API Error: '+resp.status);
   }
-  document.getElementById('funOutput').classList.remove('show');
+  
+  const data=await resp.json();
+  const top=data.suggestions[0];
+  const details=top.plant_details;
+  
+  let wikiDesc=details.wiki_description?.value||'';
+  if(wikiDesc.length>300)wikiDesc=wikiDesc.substring(0,300)+'...';
+  
+  const taxo=details.taxonomy||{};
+  
+  return {
+    name:details.common_names?.[0]||top.plant_name,
+    latin:top.plant_name,
+    confidence:Math.round(top.probability*100)+'%',
+    emoji:getEmoji(top.plant_name),
+    family:taxo.family||'—',
+    genus:taxo.genus||'—',
+    kingdom:taxo.kingdom||'Plantae',
+    order:taxo.order||'—',
+    desc:wikiDesc||'Ye plant successfully identify ho gaya. Detailed info ke liye Wikipedia link dekhein.',
+    tags:generateTags(top.plant_name,details),
+    care:generateCare(top.plant_name),
+    url:details.url||'',
+    isReal:true,
+    rawData:JSON.stringify(data,null,2).substring(0,800)+'...'
+  };
 }
 
-function showFun(type) {
-  if (!currentFlower) return;
-  const output = document.getElementById('funOutput');
-  const title = document.getElementById('funTitle');
-  const body = document.getElementById('funBody');
-  const loading = document.getElementById('funLoading');
+function getEmoji(name){
+  const n=name.toLowerCase();
+  if(n.includes('rosa')||n.includes('rose'))return'🌹';
+  if(n.includes('sunflow')||n.includes('heliant'))return'🌻';
+  if(n.includes('tulip'))return'🌷';
+  if(n.includes('lotus')||n.includes('nelumb'))return'🪷';
+  if(n.includes('orchid'))return'🌺';
+  if(n.includes('daisy')||n.includes('chrysan'))return'🌼';
+  if(n.includes('cactus'))return'🌵';
+  if(n.includes('bamb'))return'🎋';
+  if(n.includes('palm'))return'🌴';
+  if(n.includes('mango'))return'🥭';
+  return'🌿';
+}
 
-  output.classList.add('show');
-  loading.style.display = 'block';
-  body.innerHTML = '';
+function generateTags(name,details){
+  const tags=[];
+  const n=name.toLowerCase();
+  if(n.includes('rosa')||n.includes('jasmin'))tags.push({t:'Khushbudar',c:'tag-g'});
+  if(details.common_names?.length>0)tags.push({t:details.common_names[0],c:'tag-a'});
+  tags.push({t:'Flowering Plant',c:'tag-g'});
+  if(n.includes('lotus')||n.includes('water'))tags.push({t:'Aquatic',c:'tag-r'});
+  if(tags.length<3)tags.push({t:'Wild Species',c:'tag-g'});
+  return tags.slice(0,4);
+}
 
-  const f = currentFlower;
+function generateCare(name){
+  const n=name.toLowerCase();
+  const water=n.includes('cactus')||n.includes('succulent')?'Mahine mein 1x':'Hafte mein 2-3x';
+  const sun=n.includes('lotus')||n.includes('water')?'Poori dhoop':'6-8 ghante';
+  const temp=n.includes('tropical')?'22-32°C':'15-28°C';
+  return[
+    {e:'☀️',l:'Dhoop',v:sun},
+    {e:'💧',l:'Paani',v:water},
+    {e:'🌡️',l:'Garmi',v:temp}
+  ];
+}
 
-  setTimeout(() => {
-    loading.style.display = 'none';
+function getDemoPlant(){
+  const demos=[
+    {name:'Rose',latin:'Rosa × hybrida',confidence:'97%',emoji:'🌹',family:'Rosaceae',genus:'Rosa',kingdom:'Plantae',order:'Rosales',desc:'Gulab ek bahuvarsheey phool wala paudha hai jo apni khoobsurati aur khushbu ke liye duniya bhar mein mashoor hai. Muhabbat aur romanticiyat ka ye sab se aam nishaan hai. Gulab ki 300 se zyada species aur 35,000 cultivars maujood hain.',tags:[{t:'Khushbudar',c:'tag-g'},{t:'Muhabbat',c:'tag-a'},{t:'Thorny',c:'tag-r'},{t:'Perennial',c:'tag-g'}],care:[{e:'☀️',l:'Dhoop',v:'6+ ghante'},{e:'💧',l:'Paani',v:'3x hafte'},{e:'🌡️',l:'Garmi',v:'15-25°C'}],poem:'Gulab ki patti mein chupta hai raaz,\nMuhabbat ki khushbu ka andaaz.\nKante hain par phir bhi haseen,\nJaise zindagi ka ek naya wiraaz.',myth:'Yunan devi Aphrodite ke aansuon se gulab pehli baar khila. Har kanta uski taklif ki nishani hai, aur har patti uski muhabbat ki.',langs:[{l:'Farsi',w:'گل سرخ'},{l:'Arabic',w:'وردة'},{l:'French',w:'La Rose'},{l:'Japanese',w:'薔薇 Bara'},{l:'Spanish',w:'La Rosa'},{l:'German',w:'Die Rose'},{l:'Chinese',w:'玫瑰 Méiguī'},{l:'Turkish',w:'Gül'}],zodiac:'♉ Taurus – Muhabbat aur khoobsurati ka sign',recipe:'Gulab ki petian chai mein dalein – stress khatam. Gulab jal (rose water) skin ke liye behtareen toner hai. Gulab ki jam aur murabba bhi banta hai.',isDemo:true},
+    {name:'Sunflower',latin:'Helianthus annuus',confidence:'94%',emoji:'🌻',family:'Asteraceae',genus:'Helianthus',kingdom:'Plantae',order:'Asterales',desc:'Surajmukhi ek qaad-avar phool wala paudha hai jo suraj ki taraf munh karta hai – ise heliotropism kehte hain. North America mein pehle khoja gaya aur aaj duniya bhar mein uski kheti hoti hai. Iski bijlian tel aur ghiza ke liye use hoti hain.',tags:[{t:'Heliotropic',c:'tag-a'},{t:'Edible Seeds',c:'tag-g'},{t:'Annual',c:'tag-g'},{t:'Oil Plant',c:'tag-a'}],care:[{e:'☀️',l:'Dhoop',v:'Poori dhoop'},{e:'💧',l:'Paani',v:'Hafte mein'},{e:'📏',l:'Qad',v:'Up to 3m'}],poem:'Surajmukhi roz suraj se milne jaata hai,\nHar subah nayi umeed laata hai.',myth:'Aztec tamaddun mein ye Tonatiuh – suraj deva – ka muqaddas phool tha. Dehkaan ise apne kheton ki hifazat ke liye ugate the.',langs:[{l:'Spanish',w:'Girasol'},{l:'French',w:'Tournesol'},{l:'Arabic',w:'عباد الشمس'},{l:'Japanese',w:'向日葵'},{l:'German',w:'Sonnenblume'},{l:'Italian',w:'Girasole'},{l:'Russian',w:'Подсолнух'},{l:'Hindi',w:'सूरजमुखी'}],zodiac:'♌ Leo – Roshni aur khushi ka sign',recipe:'Surajmukhi ke beej seedha khayen – healthy snack! Sunflower oil khana pakaane ke liye. Patte salad mein use ho sakte hain.',isDemo:true}
+  ];
+  return demos[Math.floor(Math.random()*demos.length)];
+}
 
-    if (type === 'poem') {
-      title.innerHTML = '📝 ' + f.name + ' par Nazm';
-      body.innerHTML = `<div class="poem-text">${f.poem.replace(/\n/g,'<br>')}</div>`;
-    } else if (type === 'myth') {
-      title.innerHTML = '🏛️ Purani Daastaan';
-      body.innerHTML = `<div class="myth-text">${f.myth}</div>`;
-    } else if (type === 'langs') {
-      title.innerHTML = '🌍 Duniya ki Zubanen mein';
-      body.innerHTML = `<div class="lang-grid">${f.langs.map(l=>`<div class="lang-item"><div class="lang-name">${l.l}</div><div class="lang-word">${l.w}</div></div>`).join('')}</div>`;
-    } else if (type === 'quiz') {
-      title.innerHTML = '🎯 Flower Quiz';
-      const qs = [
-        {q:`${f.name} ka botanical naam kya hai?`, a:f.latin},
-        {q:`${f.name} kin mahinon mein khilta hai?`, a:f.season + ' ke mausam mein'},
-        {q:`${f.name} ka pariwar kaun sa hai?`, a:'Family: ' + f.family}
+function renderResult(p){
+  document.getElementById('resultEmpty').style.display='none';
+  document.getElementById('resultMain').style.display='block';
+  
+  const hw=document.getElementById('heroImgWrap');
+  if(capturedImg){
+    hw.innerHTML=`<img class="result-hero-img" src="${capturedImg}">`;
+  } else {
+    hw.innerHTML=`<div class="result-hero-emoji">${p.emoji}</div>`;
+  }
+  
+  document.getElementById('rName').textContent=p.name;
+  document.getElementById('rLatin').textContent=p.latin;
+  document.getElementById('confTxt').textContent=p.confidence+' confidence';
+  document.getElementById('rDesc').textContent=p.desc;
+  
+  const infoData=[
+    ['Family',p.family],['Genus',p.genus],
+    ['Kingdom',p.kingdom],['Order',p.order]
+  ];
+  document.getElementById('infoGrid').innerHTML=infoData.map(([l,v])=>`
+    <div class="info-cell">
+      <div class="cell-label">${l}</div>
+      <div class="cell-val">${v}</div>
+    </div>`).join('');
+  
+  document.getElementById('rTags').innerHTML=(p.tags||[]).map(t=>`<span class="tag ${t.c}">${t.t}</span>`).join('');
+  
+  document.getElementById('careRow').innerHTML=(p.care||[]).map(c=>`
+    <div class="care-card">
+      <div class="care-em">${c.e}</div>
+      <div class="care-l">${c.l}</div>
+      <div class="care-v">${c.v}</div>
+    </div>`).join('');
+  
+  if(p.isReal&&p.rawData){
+    document.getElementById('rawApiResult').style.display='block';
+    document.getElementById('rawPre').textContent=p.rawData;
+  }
+  
+  if(p.isDemo){
+    const note=document.createElement('div');
+    note.className='api-note';
+    note.style.marginTop='1rem';
+    note.innerHTML=`<div class="api-note-title">🎭 Demo Mode</div><div class="api-note-text">Ye demo data hai. Real ML ke liye Plant.id API key Setup tab mein enter karein.</div>`;
+    document.getElementById('resultMain').appendChild(note);
+  }
+}
+
+function updateFunSubtitle(){
+  document.getElementById('funSubtitle').textContent=currentPlant?
+    `${currentPlant.name} ke baare mein explore karein`:
+    'Pehle ek plant scan karein';
+}
+
+function funAct(type){
+  if(!currentPlant){
+    alert('Pehle ek plant scan karein! 🌿');
+    goTab('camera');return;
+  }
+  const p=currentPlant;
+  const out=document.getElementById('funOut');
+  const title=document.getElementById('funOutTitle');
+  const body=document.getElementById('funOutBody');
+  const spin=document.getElementById('funSpin');
+  
+  out.classList.add('show');
+  spin.style.display='block';
+  body.innerHTML='';
+  
+  setTimeout(()=>{
+    spin.style.display='none';
+    if(type==='poem'){
+      title.innerHTML='📜 '+p.name+' par Shayari';
+      body.innerHTML=`<div class="poem-line">${(p.poem||generatePoem(p)).replace(/\n/g,'<br>')}</div>`;
+    } else if(type==='myth'){
+      title.innerHTML='🏺 Purani Kahani';
+      body.innerHTML=`<div class="myth-quote">${p.myth||generateMyth(p)}</div>`;
+    } else if(type==='langs'){
+      title.innerHTML='🌍 8 Zubanen Mein '+p.name;
+      const langs=p.langs||generateLangs(p);
+      body.innerHTML=`<div class="lang-grid2">${langs.map(l=>`<div class="lang-item"><div class="lang-name2">${l.l}</div><div class="lang-word2">${l.w}</div></div>`).join('')}</div>`;
+    } else if(type==='quiz'){
+      title.innerHTML='🎯 Quiz – '+p.name;
+      const qs=[
+        {q:`${p.name} ka scientific naam kya hai?`,a:p.latin},
+        {q:`${p.name} kin family se belong karta hai?`,a:p.family},
+        {q:`${p.name} ka kingdom kya hai?`,a:p.kingdom},
+        {q:`${p.name} ki identification confidence kitni hai?`,a:p.confidence}
       ];
-      body.innerHTML = qs.map((q,i) => `
-        <div style="margin-bottom:14px;">
-          <div style="font-size:13px;font-weight:500;color:var(--color-text-primary);margin-bottom:6px;">Q${i+1}. ${q.q}</div>
-          <div style="cursor:pointer;font-size:13px;color:var(--color-text-secondary);padding:8px 12px;background:var(--color-background-secondary);border-radius:8px;" 
-               onclick="this.style.color='var(--color-text-primary)';this.style.fontWeight='500';this.style.background='#E1F5EE';this.style.color='#085041'">
-            Jawab dekhne ke liye tap karen → ${q.a}
+      body.innerHTML=qs.map((q,i)=>`
+        <div style="margin-bottom:14px">
+          <div style="font-size:13px;font-weight:600;color:var(--cream);margin-bottom:6px">Q${i+1}. ${q.q}</div>
+          <div style="cursor:pointer;font-size:13px;color:var(--text3);padding:10px 14px;background:rgba(10,26,15,0.5);border:1px solid rgba(74,175,122,0.15);border-radius:10px;transition:all 0.3s"
+               onclick="this.style.color='var(--leaf3)';this.style.borderColor='var(--leaf2)';this.style.background='rgba(45,122,79,0.15)'">
+            Jawab dekhne ke liye tap karein → ${q.a}
           </div>
         </div>`).join('');
-    } else if (type === 'zodiac') {
-      title.innerHTML = '⭐ Zodyak Match';
-      body.innerHTML = `<div style="font-size:28px;text-align:center;margin-bottom:10px;">${f.zodiac.split(' ')[0]}</div>
-        <div style="font-size:13px;line-height:1.7;">${f.zodiac}</div>`;
-    } else if (type === 'gift') {
-      title.innerHTML = '🎁 Gift Guide';
-      body.innerHTML = `<div style="font-size:13px;line-height:1.8;">${f.gift}</div>`;
+    } else if(type==='zodiac'){
+      title.innerHTML='⭐ Zodyak Match – '+p.name;
+      const z=p.zodiac||getZodiac(p);
+      body.innerHTML=`<div style="font-size:36px;text-align:center;margin-bottom:12px">${z.split('–')[0].trim()}</div><div style="font-size:14px;line-height:1.8;color:rgba(240,237,228,0.75)">${z}</div>`;
+    } else if(type==='recipe'){
+      title.innerHTML='🍵 '+p.name+' – Nuska / Recipe';
+      body.innerHTML=`<div class="fun-body">${p.recipe||generateRecipe(p)}</div>`;
     }
-
-    output.scrollIntoView({behavior:'smooth',block:'nearest'});
-  }, 900);
+    out.scrollIntoView({behavior:'smooth',block:'nearest'});
+  },800);
 }
 
-function saveFlower() {
-  if (!currentFlower) return;
-  const already = savedFlowers.find(f => f.name === currentFlower.name);
-  if (already) { alert('Ye flower pehle se mehfooz hai!'); return; }
+function generatePoem(p){
+  return `${p.name} ki khoobsurati ka koi jawab nahi,\nFizaon mein bikhri iski mehek be-hisab nahi.\nRoshan hai har subah teri raushni se ye jahan,\nAe ${p.name}, tera hi hai yahan sab se ala maqam.`;
+}
+function generateMyth(p){
+  return `Qadeem zamanon mein ${p.name} ko devtaon ka uphaar samjha jaata tha. Kahaniyan hain ke jis zameen par pehli baar ${p.name} ugaa, wahan khazana chupaaya hua tha. Aaj bhi duniya bhar ke logon mein is ki khas izzat hai.`;
+}
+function generateLangs(p){
+  return[{l:'Urdu',w:p.name},{l:'Arabic',w:p.name},{l:'French',w:p.name},{l:'Spanish',w:p.name},{l:'Japanese',w:p.name},{l:'German',w:p.name},{l:'Chinese',w:p.name},{l:'Russian',w:p.name}];
+}
+function getZodiac(p){return'🌿 Virgo – Qudrat aur khidmat ka sign. '+p.name+' Virgo ki tarah paak aur behtareen hai.';}
+function generateRecipe(p){return p.name+' kai tarah upyog hota hai. Iske patte chai ya kadhe mein dal sakte hain. Kuch logon mein ye decoration ke liye bhi use hota hai. Hamesha expert se pooch ke istemal karein kyunke kuch plants zeherile bhi ho sakte hain.';}
 
-  savedFlowers.push({
-    ...currentFlower,
-    date: new Date().toLocaleDateString('ur-PK'),
-    img: capturedImageData
-  });
-
-  updateSaved();
-  alert(currentFlower.name + ' mehfooz ho gaya! 🌸');
+function saveIt(){
+  if(!currentPlant)return;
+  if(savedPlants.find(s=>s.latin===currentPlant.latin)){alert('Ye plant pehle se saved hai!');return;}
+  savedPlants.push({...currentPlant,img:capturedImg,savedAt:new Date().toLocaleDateString()});
+  renderSaved();
+  alert(currentPlant.name+' saved ho gaya! 💾');
 }
 
-function updateSaved() {
-  const empty = document.getElementById('savedEmpty');
-  const grid = document.getElementById('savedGrid');
-
-  if (savedFlowers.length === 0) {
-    empty.style.display = 'block';
-    grid.style.display = 'none';
-    return;
-  }
-
-  empty.style.display = 'none';
-  grid.style.display = 'grid';
-  grid.innerHTML = savedFlowers.map((f,i) => `
-    <div class="saved-item" onclick="viewSaved(${i})">
-      <div class="saved-thumb" style="background:${['#E1F5EE','#EEEDFE','#FAEEDA','#FAECE7'][i%4]}">
-        ${f.img ? `<img src="${f.img}" style="width:100%;height:100%;object-fit:cover;">` : f.emoji}
+function renderSaved(){
+  const empty=document.getElementById('savedEmpty');
+  const grid=document.getElementById('savedGrid');
+  if(!savedPlants.length){empty.style.display='block';grid.style.display='none';return;}
+  empty.style.display='none';grid.style.display='grid';
+  const bgs=['rgba(26,61,37,0.8)','rgba(42,15,37,0.8)','rgba(37,34,15,0.8)','rgba(15,34,42,0.8)'];
+  grid.innerHTML=savedPlants.map((p,i)=>`
+    <div class="saved-card" onclick="viewSaved(${i})">
+      <div class="saved-thumb" style="background:${bgs[i%bgs.length]}">
+        ${p.img?`<img src="${p.img}" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0">`:p.emoji}
       </div>
-      <div class="saved-label">
-        ${f.name}
-        <div class="saved-date">${f.date}</div>
+      <div class="saved-info">
+        <div class="saved-name">${p.name}</div>
+        <div class="saved-date">${p.savedAt}</div>
       </div>
     </div>`).join('');
 }
 
-function viewSaved(i) {
-  currentFlower = savedFlowers[i];
-  capturedImageData = savedFlowers[i].img || null;
-  populateResult(currentFlower);
-  switchTab('result');
+function viewSaved(i){
+  currentPlant=savedPlants[i];
+  capturedImg=savedPlants[i].img||null;
+  renderResult(currentPlant);
+  goTab('result');
 }
 </script>
+</html>
