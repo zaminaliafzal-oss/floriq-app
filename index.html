@@ -1,816 +1,507 @@
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;500;600&display=swap');
-
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;1,400&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;500;600&display=swap');
 *{box-sizing:border-box;margin:0;padding:0}
-
 :root{
---g1:#0a1a0f;--g2:#0f2a18;--g3:#1a3d25;
---leaf:#2d7a4f;--leaf2:#4aaf7a;--leaf3:#7dd4a8;
---gold:#c9a84c;--gold2:#e8c96a;
---cream:#f0ede4;--cream2:#faf8f3;
---text:#1a1a14;--text2:#4a4a3a;--text3:#8a8a7a;
---accent:#e85d3a;
+  --g1:#0a1a0f;--g2:#0f2a18;
+  --leaf:#2d7a4f;--leaf2:#4aaf7a;--leaf3:#7dd4a8;
+  --gold:#c9a84c;--gold2:#e8c96a;
+  --cream:#f0ede4;--text2:#4a4a3a;--text3:#6a6a5a;
 }
+body{font-family:'Outfit',sans-serif;background:var(--g1);color:var(--cream);min-height:100vh;overflow-x:hidden}
 
-body{
-  font-family:'Outfit',sans-serif;
-  background:var(--g1);
-  min-height:100vh;
-  color:var(--cream);
-  overflow-x:hidden;
-}
+.bg{position:fixed;inset:0;z-index:0;
+  background:radial-gradient(ellipse at 20% 50%,rgba(45,122,79,0.12) 0%,transparent 60%),
+  linear-gradient(135deg,var(--g1) 0%,var(--g2) 50%,var(--g1) 100%)}
 
-/* Animated background */
-.bg-anim{
-  position:fixed;inset:0;z-index:0;
-  background:radial-gradient(ellipse at 20% 50%,rgba(45,122,79,0.15) 0%,transparent 60%),
-    radial-gradient(ellipse at 80% 20%,rgba(74,175,122,0.1) 0%,transparent 50%),
-    radial-gradient(ellipse at 60% 80%,rgba(201,168,76,0.08) 0%,transparent 50%),
-    linear-gradient(135deg,var(--g1) 0%,var(--g2) 50%,var(--g1) 100%);
-}
+.app{position:relative;z-index:1;max-width:460px;margin:0 auto;min-height:100vh;padding-bottom:80px}
 
-.particles{position:fixed;inset:0;z-index:0;overflow:hidden}
-.particle{
-  position:absolute;border-radius:50%;
-  animation:float linear infinite;
-  opacity:0;
-}
-@keyframes float{
-  0%{transform:translateY(100vh) rotate(0deg);opacity:0}
-  10%{opacity:0.6}
-  90%{opacity:0.3}
-  100%{transform:translateY(-10vh) rotate(720deg);opacity:0}
-}
-
-.app{position:relative;z-index:1;max-width:480px;margin:0 auto;min-height:100vh;padding:0 0 100px}
-
-/* Header */
-.header{
-  padding:1.5rem 1.5rem 1rem;
-  display:flex;align-items:center;justify-content:space-between;
-  border-bottom:1px solid rgba(74,175,122,0.15);
-}
-.logo{
-  font-family:'Cormorant Garamond',serif;
-  font-size:28px;font-weight:600;
+.header{padding:1.2rem 1.4rem 0.9rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(74,175,122,0.12)}
+.logo{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:600;
   background:linear-gradient(135deg,var(--leaf3),var(--gold2));
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;
-  display:flex;align-items:center;gap:10px;
-}
-.logo-leaf{
-  width:36px;height:36px;
-  background:linear-gradient(135deg,var(--leaf),var(--leaf2));
-  border-radius:50% 10% 50% 10%;
-  display:flex;align-items:center;justify-content:center;
-  font-size:18px;
-  animation:leafPulse 3s ease-in-out infinite;
-  -webkit-text-fill-color:initial;
-}
-@keyframes leafPulse{
-  0%,100%{transform:scale(1) rotate(0deg)}
-  50%{transform:scale(1.05) rotate(5deg)}
-}
-.ai-badge{
-  font-family:'DM Mono',monospace;
-  font-size:10px;letter-spacing:1px;
-  background:rgba(45,122,79,0.2);
-  border:1px solid rgba(74,175,122,0.3);
-  color:var(--leaf3);
-  padding:4px 10px;border-radius:20px;
-  display:flex;align-items:center;gap:5px;
-}
-.pulse-dot{
-  width:6px;height:6px;border-radius:50%;
-  background:var(--leaf2);
-  animation:pulseDot 2s ease-in-out infinite;
-}
-@keyframes pulseDot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.4;transform:scale(0.7)}}
+  display:flex;align-items:center;gap:8px}
+.logo-dot{width:32px;height:32px;background:linear-gradient(135deg,var(--leaf),var(--leaf2));
+  border-radius:50% 10% 50% 10%;display:flex;align-items:center;justify-content:center;
+  font-size:16px;-webkit-text-fill-color:initial;
+  animation:spin3d 6s ease-in-out infinite}
+@keyframes spin3d{0%,100%{border-radius:50% 10% 50% 10%}50%{border-radius:10% 50% 10% 50%}}
+.badge{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:1px;
+  background:rgba(45,122,79,0.2);border:1px solid rgba(74,175,122,0.3);
+  color:var(--leaf3);padding:4px 10px;border-radius:20px;display:flex;align-items:center;gap:5px}
+.pdot{width:6px;height:6px;border-radius:50%;background:var(--leaf2);animation:pd 2s ease-in-out infinite}
+@keyframes pd{0%,100%{opacity:1}50%{opacity:0.3}}
 
-/* Nav tabs */
-.nav{
-  display:flex;
-  background:rgba(10,26,15,0.8);
-  border-bottom:1px solid rgba(74,175,122,0.1);
-  padding:0 1rem;gap:0;
-  position:sticky;top:0;z-index:10;
-  backdrop-filter:blur(20px);
-}
-.nav-tab{
-  flex:1;padding:12px 8px;
-  text-align:center;font-size:12px;font-weight:500;
-  color:var(--text3);cursor:pointer;
-  border-bottom:2px solid transparent;
-  transition:all 0.3s;
-  letter-spacing:0.5px;
-  text-transform:uppercase;
-}
-.nav-tab.active{color:var(--leaf3);border-bottom-color:var(--leaf2)}
-.nav-tab:hover:not(.active){color:var(--cream);border-bottom-color:rgba(74,175,122,0.3)}
+.nav{display:flex;background:rgba(10,26,15,0.85);border-bottom:1px solid rgba(74,175,122,0.1);
+  padding:0 0.8rem;position:sticky;top:0;z-index:10;backdrop-filter:blur(20px)}
+.nt{flex:1;padding:11px 6px;text-align:center;font-size:11px;font-weight:500;
+  color:var(--text3);cursor:pointer;border-bottom:2px solid transparent;
+  transition:all 0.3s;letter-spacing:0.5px;text-transform:uppercase}
+.nt.active{color:var(--leaf3);border-bottom-color:var(--leaf2)}
+.nt:hover:not(.active){color:var(--cream)}
 
-/* Screens */
-.screen{display:none;animation:fadeIn 0.4s ease}
-.screen.active{display:block}
-@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.scr{display:none;animation:fi 0.35s ease}
+.scr.active{display:block}
+@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 
-/* Camera screen */
-.camera-wrap{padding:1.5rem}
+/* ===== CAMERA SCREEN ===== */
+.cam-wrap{padding:1.2rem}
 
-.upload-zone{
-  position:relative;
-  border-radius:24px;
-  overflow:hidden;
-  aspect-ratio:4/5;
-  cursor:pointer;
-  border:1.5px solid rgba(74,175,122,0.3);
-  background:rgba(15,42,24,0.6);
-  display:flex;flex-direction:column;
-  align-items:center;justify-content:center;
-  transition:all 0.4s;
-  margin-bottom:1.5rem;
-}
-.upload-zone:hover{
-  border-color:rgba(74,175,122,0.6);
-  background:rgba(15,42,24,0.8);
+.cam-box{
+  position:relative;border-radius:22px;overflow:hidden;
+  aspect-ratio:3/4;background:#000;
+  border:1.5px solid rgba(74,175,122,0.25);
+  margin-bottom:1rem;cursor:pointer;
 }
 
-.upload-zone img{
-  width:100%;height:100%;object-fit:cover;
-  position:absolute;inset:0;
-  border-radius:24px;
-}
+#liveVideo{width:100%;height:100%;object-fit:cover;display:none;border-radius:22px}
+#snapCanvas{width:100%;height:100%;object-fit:cover;display:none;position:absolute;inset:0;border-radius:22px}
+#galleryImg{width:100%;height:100%;object-fit:cover;display:none;position:absolute;inset:0;border-radius:22px}
 
-.scan-overlay{
-  position:absolute;inset:0;
-  background:linear-gradient(transparent 40%,rgba(10,26,15,0.7) 100%);
-  display:flex;flex-direction:column;
-  align-items:center;justify-content:center;
-  gap:12px;z-index:2;
-}
+.cam-idle{
+  position:absolute;inset:0;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:14px;z-index:2}
+.cam-idle-icon{width:70px;height:70px;border-radius:50%;
+  border:2px solid rgba(74,175,122,0.4);background:rgba(10,26,15,0.6);
+  display:flex;align-items:center;justify-content:center;font-size:30px;
+  transition:all 0.3s}
+.cam-idle-text{font-size:14px;color:rgba(240,237,228,0.6);text-align:center;padding:0 2rem;line-height:1.5}
 
-.camera-icon-wrap{
-  width:72px;height:72px;
-  border-radius:50%;
-  border:2px solid rgba(74,175,122,0.4);
-  background:rgba(10,26,15,0.6);
-  display:flex;align-items:center;justify-content:center;
-  font-size:32px;
-  transition:all 0.3s;
-  backdrop-filter:blur(10px);
-}
-.upload-zone:hover .camera-icon-wrap{
-  border-color:var(--leaf2);
-  background:rgba(45,122,79,0.3);
-  transform:scale(1.05);
-}
+.cam-live-ui{
+  position:absolute;inset:0;z-index:3;pointer-events:none;
+  display:none;flex-direction:column;justify-content:space-between;padding:14px}
+.cam-live-ui.show{display:flex}
 
-.upload-hint{
-  font-size:14px;color:rgba(240,237,228,0.6);
-  text-align:center;padding:0 2rem;
-  line-height:1.5;
-}
+.cam-top-bar{display:flex;justify-content:space-between;align-items:center}
+.rec-badge{background:rgba(232,93,58,0.85);border-radius:20px;padding:4px 12px;
+  font-family:'DM Mono',monospace;font-size:11px;color:white;
+  display:flex;align-items:center;gap:5px}
+.rec-dot{width:6px;height:6px;border-radius:50%;background:white;animation:pd 1s ease-in-out infinite}
+.zoom-badge{background:rgba(10,26,15,0.7);border:1px solid rgba(74,175,122,0.3);
+  border-radius:20px;padding:4px 12px;font-family:'DM Mono',monospace;font-size:11px;color:var(--leaf3)}
 
-/* Corner brackets */
-.bracket{position:absolute;width:30px;height:30px;border-color:var(--leaf2);border-style:solid;opacity:0.7}
-.bracket.tl{top:16px;left:16px;border-width:2px 0 0 2px;border-radius:4px 0 0 0}
-.bracket.tr{top:16px;right:16px;border-width:2px 2px 0 0;border-radius:0 4px 0 0}
-.bracket.bl{bottom:16px;left:16px;border-width:0 0 2px 2px;border-radius:0 0 0 4px}
-.bracket.br{bottom:16px;right:16px;border-width:0 2px 2px 0;border-radius:0 0 4px 0}
+.cam-bottom-bar{display:flex;justify-content:center;align-items:center;gap:24px;pointer-events:all}
+.shutter-btn{
+  width:72px;height:72px;border-radius:50%;
+  background:white;border:4px solid rgba(255,255,255,0.3);
+  cursor:pointer;transition:all 0.15s;display:flex;align-items:center;justify-content:center;
+  box-shadow:0 0 0 2px rgba(255,255,255,0.2)}
+.shutter-btn:active{transform:scale(0.92)}
+.shutter-inner{width:56px;height:56px;border-radius:50%;background:white}
 
-/* Scan line animation */
-.scan-beam{
-  position:absolute;left:8%;right:8%;height:2px;
+.flip-btn{width:46px;height:46px;border-radius:50%;
+  background:rgba(10,26,15,0.6);border:1px solid rgba(74,175,122,0.3);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;
+  transition:all 0.3s;pointer-events:all}
+.flip-btn:hover{background:rgba(45,122,79,0.3)}
+
+.gallery-btn{width:46px;height:46px;border-radius:12px;
+  background:rgba(10,26,15,0.6);border:1px solid rgba(74,175,122,0.3);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;
+  transition:all 0.3s;overflow:hidden;pointer-events:all}
+.gallery-btn:hover{border-color:var(--leaf2)}
+#galleryThumb{width:100%;height:100%;object-fit:cover;display:none}
+
+.scan-beam{position:absolute;left:8%;right:8%;height:2px;
   background:linear-gradient(90deg,transparent,var(--leaf2),var(--gold2),var(--leaf2),transparent);
-  display:none;z-index:3;
-  animation:scanBeam 2s ease-in-out infinite;
-  box-shadow:0 0 12px var(--leaf2);
-}
-@keyframes scanBeam{
-  0%{top:10%;opacity:0}5%{opacity:1}
-  95%{opacity:1}100%{top:90%;opacity:0}
-}
+  display:none;z-index:4;animation:beam 2s ease-in-out infinite;
+  box-shadow:0 0 10px rgba(74,175,122,0.6)}
+@keyframes beam{0%{top:10%;opacity:0}5%{opacity:1}95%{opacity:1}100%{top:90%;opacity:0}}
 
-/* Buttons */
-.btn-main{
-  width:100%;padding:16px;
-  background:linear-gradient(135deg,var(--leaf),var(--leaf2));
-  border:none;border-radius:16px;
-  color:white;font-family:'Outfit',sans-serif;
-  font-size:15px;font-weight:600;
-  cursor:pointer;letter-spacing:0.5px;
-  transition:all 0.3s;
-  position:relative;overflow:hidden;
-}
-.btn-main::before{
-  content:'';position:absolute;inset:0;
-  background:linear-gradient(135deg,rgba(255,255,255,0.1),transparent);
-  opacity:0;transition:opacity 0.3s;
-}
-.btn-main:hover::before{opacity:1}
-.btn-main:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(45,122,79,0.4)}
-.btn-main:active{transform:translateY(0)}
-.btn-main:disabled{opacity:0.5;cursor:not-allowed;transform:none}
+.bkt{position:absolute;width:26px;height:26px;border-color:var(--leaf2);border-style:solid;opacity:0.6;z-index:2}
+.bkt.tl{top:14px;left:14px;border-width:2px 0 0 2px;border-radius:4px 0 0 0}
+.bkt.tr{top:14px;right:14px;border-width:2px 2px 0 0;border-radius:0 4px 0 0}
+.bkt.bl{bottom:14px;left:14px;border-width:0 0 2px 2px;border-radius:0 0 0 4px}
+.bkt.br{bottom:14px;right:14px;border-width:0 2px 2px 0;border-radius:0 0 4px 0}
 
-.btn-row{display:flex;gap:12px;margin-bottom:1rem}
-.btn-sec{
-  padding:14px 18px;
-  background:rgba(45,122,79,0.15);
-  border:1px solid rgba(74,175,122,0.3);
-  border-radius:14px;color:var(--leaf3);
-  font-family:'Outfit',sans-serif;font-size:14px;
-  cursor:pointer;transition:all 0.3s;
-  display:flex;align-items:center;gap:6px;
-}
-.btn-sec:hover{background:rgba(45,122,79,0.25);border-color:var(--leaf2)}
+.focus-ring{position:absolute;width:80px;height:80px;border:2px solid var(--gold2);
+  border-radius:4px;display:none;pointer-events:none;z-index:5;
+  animation:focusPulse 0.5s ease-out forwards}
+@keyframes focusPulse{0%{transform:scale(1.4);opacity:0}100%{transform:scale(1);opacity:1}}
 
-/* Progress */
-.progress-wrap{
-  display:none;text-align:center;padding:2rem;
-  background:rgba(15,42,24,0.4);
-  border-radius:20px;border:1px solid rgba(74,175,122,0.15);
-  margin-bottom:1rem;
-}
-.progress-wrap.show{display:block;animation:fadeIn 0.3s ease}
+.preview-overlay{
+  position:absolute;inset:0;z-index:6;display:none;
+  flex-direction:column;justify-content:flex-end;padding:16px;
+  background:linear-gradient(transparent 50%,rgba(10,26,15,0.9))}
+.preview-overlay.show{display:flex}
+.preview-btns{display:flex;gap:10px}
+.prev-btn{flex:1;padding:12px;border-radius:14px;font-family:'Outfit',sans-serif;
+  font-size:14px;font-weight:500;cursor:pointer;border:none;transition:all 0.2s}
+.prev-retake{background:rgba(255,255,255,0.15);color:white;border:1px solid rgba(255,255,255,0.3)}
+.prev-use{background:linear-gradient(135deg,var(--leaf),var(--leaf2));color:white}
+.prev-use:hover{opacity:0.9}
 
-.spinner-ring{
-  width:56px;height:56px;
-  border-radius:50%;
+/* action row */
+.act-row{display:flex;gap:10px;margin-bottom:1rem}
+.btn-open{flex:1;padding:14px;background:linear-gradient(135deg,var(--leaf),var(--leaf2));
+  border:none;border-radius:14px;color:white;font-family:'Outfit',sans-serif;
+  font-size:14px;font-weight:600;cursor:pointer;transition:all 0.3s}
+.btn-open:hover{opacity:0.9;transform:translateY(-1px)}
+.btn-open:disabled{opacity:0.5;cursor:not-allowed;transform:none}
+.btn-gal{padding:13px 16px;background:rgba(45,122,79,0.15);
+  border:1px solid rgba(74,175,122,0.3);border-radius:14px;color:var(--leaf3);
+  font-family:'Outfit',sans-serif;font-size:14px;cursor:pointer;transition:all 0.3s}
+.btn-gal:hover{background:rgba(45,122,79,0.25);border-color:var(--leaf2)}
+.btn-scan{width:100%;padding:15px;background:linear-gradient(135deg,var(--leaf),var(--leaf2));
+  border:none;border-radius:14px;color:white;font-family:'Outfit',sans-serif;
+  font-size:15px;font-weight:600;cursor:pointer;margin-bottom:1rem;transition:all 0.3s}
+.btn-scan:hover{opacity:0.9;transform:translateY(-1px)}
+.btn-scan:disabled{opacity:0.5;cursor:not-allowed;transform:none}
+
+.prog-box{display:none;text-align:center;padding:1.5rem;
+  background:rgba(15,42,24,0.4);border:1px solid rgba(74,175,122,0.15);
+  border-radius:18px;margin-bottom:1rem;animation:fi 0.3s ease}
+.prog-box.show{display:block}
+.spin{width:44px;height:44px;border-radius:50%;
   border:3px solid rgba(74,175,122,0.15);
-  border-top-color:var(--leaf2);
-  border-right-color:var(--gold2);
-  animation:spin 1s linear infinite;
-  margin:0 auto 12px;
-}
-@keyframes spin{to{transform:rotate(360deg)}}
+  border-top-color:var(--leaf2);border-right-color:var(--gold2);
+  animation:sp 0.9s linear infinite;margin:0 auto 10px}
+@keyframes sp{to{transform:rotate(360deg)}}
+.prog-txt{font-family:'DM Mono',monospace;font-size:12px;color:var(--leaf3);letter-spacing:0.5px}
 
-.progress-text{
-  font-family:'DM Mono',monospace;
-  font-size:13px;color:var(--leaf3);
-  letter-spacing:0.5px;
-}
+.tip{background:rgba(15,42,24,0.4);border:1px solid rgba(74,175,122,0.12);
+  border-radius:14px;padding:12px 14px;display:flex;gap:10px}
+.tip-i{font-size:15px;flex-shrink:0;margin-top:1px}
+.tip-t{font-size:12px;color:rgba(240,237,228,0.55);line-height:1.6}
+.tip-t b{color:var(--leaf3);font-weight:500}
 
-/* Info card */
-.info-strip{
-  background:rgba(15,42,24,0.4);
-  border:1px solid rgba(74,175,122,0.15);
-  border-radius:16px;padding:14px 16px;
-  display:flex;gap:12px;align-items:flex-start;
-}
-.info-icon{font-size:16px;flex-shrink:0;margin-top:2px}
-.info-text{font-size:13px;color:rgba(240,237,228,0.55);line-height:1.6}
-.info-text b{color:var(--leaf3);font-weight:500}
+/* ===== RESULT ===== */
+.res-wrap{padding:1.2rem}
+.res-empty{text-align:center;padding:3.5rem 2rem;color:var(--text3)}
+.res-empty-i{font-size:52px;margin-bottom:14px;opacity:0.3;animation:breathe 4s ease-in-out infinite}
+@keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
 
-/* API note */
-.api-note{
-  background:rgba(201,168,76,0.08);
-  border:1px solid rgba(201,168,76,0.2);
-  border-radius:14px;padding:14px 16px;
-  margin-top:1rem;
-}
-.api-note-title{
-  font-size:12px;font-weight:600;color:var(--gold2);
-  letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;
-}
-.api-note-text{font-size:13px;color:rgba(240,237,228,0.6);line-height:1.6}
-.api-link{color:var(--leaf3);text-decoration:underline;cursor:pointer}
+.res-hero{border-radius:22px;overflow:hidden;position:relative;margin-bottom:1.2rem;
+  border:1px solid rgba(74,175,122,0.18)}
+.res-img-area{height:230px;display:flex;align-items:center;justify-content:center;font-size:76px;
+  background:linear-gradient(135deg,rgba(26,61,37,0.8),rgba(15,42,24,0.9))}
+.res-img-area img{width:100%;height:100%;object-fit:cover}
+.res-ov{position:absolute;bottom:0;left:0;right:0;padding:1.2rem;
+  background:linear-gradient(transparent,rgba(10,26,15,0.94))}
+.res-name{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:600;color:white}
+.res-latin{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:14px;color:rgba(255,255,255,0.55)}
+.conf{position:absolute;top:14px;right:14px;background:rgba(10,26,15,0.85);
+  backdrop-filter:blur(10px);border:1px solid rgba(74,175,122,0.35);
+  border-radius:30px;padding:5px 12px;font-family:'DM Mono',monospace;
+  font-size:11px;color:var(--leaf3);display:flex;align-items:center;gap:5px}
+.conf-d{width:7px;height:7px;border-radius:50%;background:var(--leaf2)}
 
-/* Result Screen */
-.result-wrap{padding:1.5rem}
+.igrid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:0.9rem}
+.icell{background:rgba(15,42,24,0.4);border:1px solid rgba(74,175,122,0.1);border-radius:13px;padding:11px 13px}
+.ilbl{font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--text3);margin-bottom:3px}
+.ival{font-size:13px;font-weight:500;color:var(--cream)}
+.desc{background:rgba(15,42,24,0.4);border:1px solid rgba(74,175,122,0.1);
+  border-radius:15px;padding:14px;margin-bottom:0.9rem;
+  font-size:13px;line-height:1.75;color:rgba(240,237,228,0.7)}
+.tags{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:0.9rem}
+.tg{padding:4px 13px;border-radius:30px;font-size:11px;font-weight:500;border:1px solid}
+.tg-g{background:rgba(45,122,79,0.15);color:var(--leaf3);border-color:rgba(74,175,122,0.3)}
+.tg-a{background:rgba(201,168,76,0.12);color:var(--gold2);border-color:rgba(201,168,76,0.3)}
+.tg-r{background:rgba(232,93,58,0.1);color:#f0855a;border-color:rgba(232,93,58,0.3)}
+.care-lbl{font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--text3);margin-bottom:8px}
+.care-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:0.9rem}
+.cc{background:rgba(15,42,24,0.4);border:1px solid rgba(74,175,122,0.1);border-radius:13px;padding:11px 7px;text-align:center}
+.cc-e{font-size:20px;margin-bottom:5px}
+.cc-l{font-size:10px;color:var(--text3);letter-spacing:0.4px;text-transform:uppercase}
+.cc-v{font-size:11px;font-weight:500;color:var(--cream);margin-top:2px}
+.ar{display:flex;gap:9px;margin-bottom:0.9rem}
+.ab{flex:1;padding:13px;background:rgba(45,122,79,0.15);border:1px solid rgba(74,175,122,0.22);
+  border-radius:13px;color:var(--leaf3);font-family:'Outfit',sans-serif;font-size:13px;font-weight:500;
+  cursor:pointer;transition:all 0.3s;text-align:center}
+.ab:hover{background:rgba(45,122,79,0.25);border-color:var(--leaf2)}
+.ab.pri{background:linear-gradient(135deg,var(--leaf),var(--leaf2));border-color:transparent;color:white}
+.ab.pri:hover{opacity:0.9;transform:translateY(-1px)}
+.api-note{background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.18);
+  border-radius:14px;padding:14px;margin-bottom:0.9rem}
+.an-title{font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--gold2);margin-bottom:6px}
+.an-text{font-size:12px;color:rgba(240,237,228,0.6);line-height:1.6}
+.alink{color:var(--leaf3);text-decoration:underline;cursor:pointer}
 
-.result-hero{
-  border-radius:24px;overflow:hidden;
-  position:relative;margin-bottom:1.5rem;
-  border:1px solid rgba(74,175,122,0.2);
-}
-.result-hero-img{
-  width:100%;height:240px;object-fit:cover;
-  display:block;
-}
-.result-hero-emoji{
-  width:100%;height:240px;
-  display:flex;align-items:center;justify-content:center;
-  font-size:80px;
-  background:linear-gradient(135deg,rgba(26,61,37,0.8),rgba(15,42,24,0.9));
-}
-.result-overlay{
-  position:absolute;bottom:0;left:0;right:0;
-  padding:1.5rem;
-  background:linear-gradient(transparent,rgba(10,26,15,0.95));
-}
-.result-name{
-  font-family:'Cormorant Garamond',serif;
-  font-size:30px;font-weight:600;color:white;
-  margin-bottom:4px;
-}
-.result-latin{
-  font-family:'Cormorant Garamond',serif;
-  font-style:italic;font-size:15px;
-  color:rgba(255,255,255,0.6);
-}
-.conf-pill{
-  position:absolute;top:16px;right:16px;
-  background:rgba(10,26,15,0.85);
-  backdrop-filter:blur(10px);
-  border:1px solid rgba(74,175,122,0.4);
-  border-radius:30px;padding:6px 14px;
-  font-family:'DM Mono',monospace;
-  font-size:12px;color:var(--leaf3);
-  display:flex;align-items:center;gap:6px;
-}
-.conf-bar{
-  width:8px;height:8px;border-radius:50%;
-  background:var(--leaf2);
-}
+/* ===== FUN ===== */
+.fun-wrap{padding:1.2rem}
+.fun-hdr{text-align:center;padding:0.8rem 0 1.2rem}
+.fun-hdr h2{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:600;
+  background:linear-gradient(135deg,var(--leaf3),var(--gold2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:5px}
+.fun-hdr p{font-size:12px;color:var(--text3)}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:1.2rem}
+.fc{background:rgba(15,42,24,0.4);border:1px solid rgba(74,175,122,0.1);border-radius:16px;
+  padding:16px 13px;cursor:pointer;transition:all 0.3s;position:relative;overflow:hidden}
+.fc:hover{border-color:rgba(74,175,122,0.4);transform:translateY(-2px)}
+.fc-e{font-size:24px;margin-bottom:8px}
+.fc-n{font-size:13px;font-weight:600;color:var(--cream);margin-bottom:3px}
+.fc-d{font-size:11px;color:var(--text3);line-height:1.4}
+.fout{background:rgba(15,42,24,0.5);border:1px solid rgba(74,175,122,0.18);border-radius:18px;
+  padding:18px;display:none;animation:slideUp 0.35s ease}
+.fout.show{display:block}
+@keyframes slideUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.fot{font-family:'Cormorant Garamond',serif;font-size:19px;color:var(--leaf3);margin-bottom:12px;display:flex;align-items:center;gap:7px}
+.fbody{font-size:13px;color:rgba(240,237,228,0.7);line-height:1.8}
+.poem-txt{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:16px;color:var(--cream);text-align:center;line-height:2.1}
+.myth-q{border-left:3px solid var(--leaf2);padding-left:12px;font-style:italic;color:rgba(240,237,228,0.8);line-height:1.85}
+.lgrid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.li{background:rgba(10,26,15,0.5);border-radius:9px;padding:9px 11px}
+.ln{font-size:10px;color:var(--text3);letter-spacing:0.4px;text-transform:uppercase}
+.lw{font-size:14px;font-weight:500;color:var(--cream)}
 
-/* Info grid */
-.info-grid{
-  display:grid;grid-template-columns:1fr 1fr;
-  gap:10px;margin-bottom:1rem;
-}
-.info-cell{
-  background:rgba(15,42,24,0.4);
-  border:1px solid rgba(74,175,122,0.12);
-  border-radius:14px;padding:12px 14px;
-}
-.cell-label{
-  font-size:10px;font-weight:600;letter-spacing:1px;
-  text-transform:uppercase;color:var(--text3);
-  margin-bottom:4px;
-}
-.cell-val{font-size:14px;font-weight:500;color:var(--cream)}
-
-.desc-block{
-  background:rgba(15,42,24,0.4);
-  border:1px solid rgba(74,175,122,0.12);
-  border-radius:16px;padding:16px;
-  margin-bottom:1rem;
-}
-.desc-block p{
-  font-size:14px;line-height:1.75;
-  color:rgba(240,237,228,0.75);
-}
-
-/* Tags */
-.tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:1rem}
-.tag{
-  padding:5px 14px;border-radius:30px;
-  font-size:12px;font-weight:500;letter-spacing:0.3px;
-  border:1px solid;
-}
-.tag-g{background:rgba(45,122,79,0.15);color:var(--leaf3);border-color:rgba(74,175,122,0.3)}
-.tag-a{background:rgba(201,168,76,0.12);color:var(--gold2);border-color:rgba(201,168,76,0.3)}
-.tag-r{background:rgba(232,93,58,0.12);color:#f0855a;border-color:rgba(232,93,58,0.3)}
-
-/* Care cards */
-.care-title{
-  font-size:11px;font-weight:600;letter-spacing:1px;
-  text-transform:uppercase;color:var(--text3);
-  margin-bottom:10px;
-}
-.care-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:1rem}
-.care-card{
-  background:rgba(15,42,24,0.4);
-  border:1px solid rgba(74,175,122,0.12);
-  border-radius:14px;padding:12px 8px;text-align:center;
-}
-.care-em{font-size:22px;margin-bottom:6px}
-.care-l{font-size:10px;color:var(--text3);letter-spacing:0.5px;text-transform:uppercase}
-.care-v{font-size:12px;font-weight:500;color:var(--cream);margin-top:2px}
-
-/* Action buttons */
-.action-row{display:flex;gap:10px;margin-bottom:1rem}
-.action-btn{
-  flex:1;padding:14px;
-  background:rgba(45,122,79,0.15);
-  border:1px solid rgba(74,175,122,0.25);
-  border-radius:14px;color:var(--leaf3);
-  font-family:'Outfit',sans-serif;font-size:13px;font-weight:500;
-  cursor:pointer;transition:all 0.3s;text-align:center;
-}
-.action-btn:hover{background:rgba(45,122,79,0.25);border-color:var(--leaf2)}
-.action-btn.primary{
-  background:linear-gradient(135deg,var(--leaf),var(--leaf2));
-  border-color:transparent;color:white;
-}
-.action-btn.primary:hover{opacity:0.9;transform:translateY(-1px)}
-
-/* Fun Screen */
-.fun-wrap{padding:1.5rem}
-.fun-header{
-  text-align:center;padding:1rem 0 1.5rem;
-}
-.fun-header h2{
-  font-family:'Cormorant Garamond',serif;
-  font-size:26px;font-weight:600;
-  background:linear-gradient(135deg,var(--leaf3),var(--gold2));
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
-  margin-bottom:6px;
-}
-.fun-header p{font-size:13px;color:var(--text3)}
-
-.fun-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1.5rem}
-.fun-card{
-  background:rgba(15,42,24,0.4);
-  border:1px solid rgba(74,175,122,0.12);
-  border-radius:18px;padding:18px 14px;
-  cursor:pointer;transition:all 0.35s;
-  position:relative;overflow:hidden;
-}
-.fun-card::before{
-  content:'';position:absolute;inset:0;
-  background:linear-gradient(135deg,rgba(45,122,79,0.15),transparent);
-  opacity:0;transition:opacity 0.3s;
-}
-.fun-card:hover{border-color:rgba(74,175,122,0.4);transform:translateY(-2px)}
-.fun-card:hover::before{opacity:1}
-.fun-em{font-size:26px;margin-bottom:10px}
-.fun-name{font-size:14px;font-weight:600;color:var(--cream);margin-bottom:4px}
-.fun-desc{font-size:12px;color:var(--text3);line-height:1.4}
-
-.fun-output{
-  background:rgba(15,42,24,0.5);
-  border:1px solid rgba(74,175,122,0.2);
-  border-radius:20px;padding:20px;
-  display:none;animation:slideUp 0.4s ease;
-}
-.fun-output.show{display:block}
-@keyframes slideUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-
-.fun-out-title{
-  font-family:'Cormorant Garamond',serif;
-  font-size:20px;color:var(--leaf3);
-  margin-bottom:14px;display:flex;align-items:center;gap:8px;
-}
-.fun-body{font-size:14px;color:rgba(240,237,228,0.7);line-height:1.8}
-.poem-line{
-  font-family:'Cormorant Garamond',serif;
-  font-style:italic;font-size:17px;
-  color:var(--cream);text-align:center;
-  line-height:2.2;
-}
-.myth-quote{
-  border-left:3px solid var(--leaf2);
-  padding-left:14px;
-  font-style:italic;
-  color:rgba(240,237,228,0.8);
-  line-height:1.9;
-}
-.lang-grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.lang-item{
-  background:rgba(10,26,15,0.5);
-  border-radius:10px;padding:10px 12px;
-}
-.lang-name2{font-size:10px;color:var(--text3);letter-spacing:0.5px;text-transform:uppercase}
-.lang-word2{font-size:15px;font-weight:500;color:var(--cream)}
-
-/* Saved Screen */
-.saved-wrap{padding:1.5rem}
-.saved-empty{
-  text-align:center;padding:4rem 2rem;
-  color:var(--text3);
-}
-.saved-empty-icon{
-  font-size:56px;margin-bottom:16px;
-  opacity:0.3;
-  animation:breathe 4s ease-in-out infinite;
-}
-@keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
-.saved-empty-text{font-size:14px;line-height:1.7}
-
-.saved-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.saved-card{
-  background:rgba(15,42,24,0.4);
-  border:1px solid rgba(74,175,122,0.12);
-  border-radius:18px;overflow:hidden;
-  cursor:pointer;transition:all 0.3s;
-}
-.saved-card:hover{border-color:rgba(74,175,122,0.4);transform:translateY(-2px)}
-.saved-thumb{
-  height:110px;
-  display:flex;align-items:center;justify-content:center;
-  font-size:44px;position:relative;overflow:hidden;
-}
-.saved-thumb img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
-.saved-info{padding:10px 12px;border-top:1px solid rgba(74,175,122,0.1)}
-.saved-name{font-size:14px;font-weight:500;color:var(--cream)}
-.saved-date{font-size:11px;color:var(--text3);margin-top:2px}
-
-/* How it works */
-.how-wrap{padding:1.5rem}
-.how-header{
-  text-align:center;padding:1rem 0 2rem;
-}
-.how-header h2{
-  font-family:'Cormorant Garamond',serif;
-  font-size:28px;font-weight:600;color:var(--cream);
-  margin-bottom:8px;
-}
-.how-header p{font-size:14px;color:var(--text3);line-height:1.6}
-
-.how-step{
-  display:flex;gap:16px;margin-bottom:1.5rem;
-  padding:18px;
-  background:rgba(15,42,24,0.4);
-  border:1px solid rgba(74,175,122,0.12);
-  border-radius:18px;
-}
-.step-num{
-  width:40px;height:40px;flex-shrink:0;
-  border-radius:50%;
-  background:linear-gradient(135deg,var(--leaf),var(--leaf2));
-  display:flex;align-items:center;justify-content:center;
-  font-family:'DM Mono',monospace;
-  font-size:14px;font-weight:500;color:white;
-}
-.step-content h3{font-size:15px;font-weight:600;color:var(--cream);margin-bottom:4px}
-.step-content p{font-size:13px;color:var(--text3);line-height:1.6}
-.step-content code{
-  font-family:'DM Mono',monospace;
-  font-size:11px;
-  background:rgba(45,122,79,0.2);
-  border:1px solid rgba(74,175,122,0.2);
-  color:var(--leaf3);
-  padding:2px 8px;border-radius:6px;
-  display:inline-block;margin-top:6px;
-}
-
-.api-setup{
-  background:rgba(201,168,76,0.08);
-  border:1px solid rgba(201,168,76,0.2);
-  border-radius:18px;padding:18px;
-  margin-bottom:1.5rem;
-}
-.api-setup-title{
-  font-size:11px;font-weight:600;letter-spacing:1px;
-  text-transform:uppercase;color:var(--gold2);margin-bottom:12px;
-}
-.api-step{
-  font-size:13px;color:rgba(240,237,228,0.65);
-  line-height:1.7;margin-bottom:6px;
-  padding-left:14px;position:relative;
-}
-.api-step::before{
-  content:'→';position:absolute;left:0;
-  color:var(--leaf3);
-}
-.api-link2{
-  color:var(--leaf3);text-decoration:underline;
-  cursor:pointer;
-}
+/* ===== SAVED ===== */
+.sv-wrap{padding:1.2rem}
+.sv-empty{text-align:center;padding:3.5rem 2rem;color:var(--text3)}
+.sv-ei{font-size:50px;margin-bottom:14px;opacity:0.3;animation:breathe 4s ease-in-out infinite}
+.sv-et{font-size:13px;line-height:1.7}
+.sv-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.svc{background:rgba(15,42,24,0.4);border:1px solid rgba(74,175,122,0.1);border-radius:16px;overflow:hidden;cursor:pointer;transition:all 0.3s}
+.svc:hover{border-color:rgba(74,175,122,0.4);transform:translateY(-2px)}
+.sv-thumb{height:105px;display:flex;align-items:center;justify-content:center;font-size:42px;position:relative;overflow:hidden}
+.sv-thumb img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
+.sv-info{padding:9px 11px;border-top:1px solid rgba(74,175,122,0.08)}
+.sv-name{font-size:13px;font-weight:500;color:var(--cream)}
+.sv-date{font-size:10px;color:var(--text3);margin-top:2px}
 
 input[type=file]{display:none}
 input[type=text]{
-  width:100%;padding:12px 14px;
-  background:rgba(15,42,24,0.6);
-  border:1px solid rgba(74,175,122,0.25);
-  border-radius:12px;color:var(--cream);
-  font-family:'DM Mono',monospace;font-size:13px;
-  outline:none;transition:border-color 0.3s;
-  margin-bottom:10px;
-}
+  width:100%;padding:11px 13px;margin-bottom:10px;
+  background:rgba(15,42,24,0.6);border:1px solid rgba(74,175,122,0.22);
+  border-radius:12px;color:var(--cream);font-family:'DM Mono',monospace;font-size:12px;
+  outline:none;transition:border-color 0.3s}
 input[type=text]:focus{border-color:var(--leaf2)}
 input[type=text]::placeholder{color:var(--text3)}
 </style>
 
-<div class="bg-anim"></div>
-<div class="particles" id="particles"></div>
+<div class="bg"></div>
+<input type="file" id="fileIn" accept="image/*">
+<canvas id="hiddenCanvas" style="display:none"></canvas>
 
 <div class="app">
   <div class="header">
-    <div class="logo">
-      <div class="logo-leaf">🌿</div>
-      FloraIQ
-    </div>
-    <div class="ai-badge">
-      <div class="pulse-dot"></div>
-      ML ACTIVE
-    </div>
+    <div class="logo"><div class="logo-dot">🌿</div>FloraIQ</div>
+    <div class="badge"><div class="pdot"></div>ML LIVE</div>
   </div>
 
   <div class="nav">
-    <div class="nav-tab active" onclick="goTab('camera')">📷 Scan</div>
-    <div class="nav-tab" onclick="goTab('result')">🌱 Result</div>
-    <div class="nav-tab" onclick="goTab('fun')">✨ Fun</div>
-    <div class="nav-tab" onclick="goTab('saved')">💾 Saved</div>
-    <div class="nav-tab" onclick="goTab('how')">⚙️ Setup</div>
+    <div class="nt active" onclick="goTab('camera')">📷 Camera</div>
+    <div class="nt" onclick="goTab('result')">🌱 Result</div>
+    <div class="nt" onclick="goTab('fun')">✨ Fun</div>
+    <div class="nt" onclick="goTab('saved')">💾 Saved</div>
   </div>
 
-  <!-- CAMERA SCREEN -->
-  <div id="s-camera" class="screen active">
-    <div class="camera-wrap">
+  <!-- CAMERA -->
+  <div id="s-camera" class="scr active">
+    <div class="cam-wrap">
+      <input type="text" id="apiKey" placeholder="🔑 Plant.id API key (optional — demo mode bhi chal sakta hai)">
 
-      <div class="api-note" style="margin-bottom:1rem">
-        <div class="api-note-title">🔑 API Key Required</div>
-        <div class="api-note-text">
-          Real ML detection ke liye <b>Plant.id API</b> use hoti hai. 
-          Free key ke liye <span class="api-link" onclick="openLink('https://web.plant.id/')">web.plant.id</span> par jayen. 
-          Neeche Setup tab mein key enter karein ya abhi test mode mein try karein.
+      <div class="cam-box" id="camBox">
+        <video id="liveVideo" autoplay playsinline muted></video>
+        <canvas id="snapCanvas"></canvas>
+        <img id="galleryImg">
+
+        <div class="cam-idle" id="camIdle">
+          <div class="cam-idle-icon">📷</div>
+          <div class="cam-idle-text">Camera kholine ke liye button dabayein<br><span style="font-size:11px;opacity:0.6">Ya gallery se tasveer chunein</span></div>
         </div>
-      </div>
 
-      <input type="text" id="apiKeyInput" placeholder="Plant.id API key yahaan paste karein (optional)" />
-
-      <input type="file" id="fileIn" accept="image/*" capture="environment">
-
-      <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileIn').click()">
-        <img id="previewImg" style="display:none;border-radius:24px;" />
-        <div class="scan-overlay" id="scanOverlay">
-          <div class="camera-icon-wrap">📷</div>
-          <div class="upload-hint">Flower ya plant ki tasveer len<br><span style="font-size:12px;opacity:0.6">Camera ya gallery se</span></div>
+        <div class="cam-live-ui" id="camLiveUI">
+          <div class="cam-top-bar">
+            <div class="rec-badge"><div class="rec-dot"></div>LIVE</div>
+            <div class="zoom-badge" id="zoomLbl">1.0×</div>
+          </div>
+          <div class="cam-bottom-bar">
+            <div class="gallery-btn" id="galleryBtn" onclick="openGallery()">
+              <img id="galleryThumb"><span id="galleryIcon">🖼️</span>
+            </div>
+            <div class="shutter-btn" id="shutterBtn" onclick="takePhoto()">
+              <div class="shutter-inner"></div>
+            </div>
+            <div class="flip-btn" id="flipBtn" onclick="flipCam()">🔄</div>
+          </div>
         </div>
-        <div class="bracket tl"></div>
-        <div class="bracket tr"></div>
-        <div class="bracket bl"></div>
-        <div class="bracket br"></div>
+
         <div class="scan-beam" id="scanBeam"></div>
-      </div>
+        <div class="focus-ring" id="focusRing"></div>
 
-      <div id="progressDiv" class="progress-wrap">
-        <div class="spinner-ring"></div>
-        <div class="progress-text" id="progressTxt">AI tayyar ho rahi hai...</div>
-      </div>
-
-      <div class="btn-row">
-        <button class="btn-main" style="flex:1" id="scanBtn" onclick="startScan()">🔍 Plant Identify Karo</button>
-        <button class="btn-sec" onclick="document.getElementById('fileIn').click()">📁</button>
-      </div>
-
-      <div class="info-strip">
-        <div class="info-icon">💡</div>
-        <div class="info-text">
-          <b>Best results:</b> Flower ya patti ko center mein rakhein, acchi roshni mein. 
-          Real-time ML model 20,000+ plants ko pehchan sakta hai.
+        <div class="preview-overlay" id="prevOverlay">
+          <div class="preview-btns">
+            <button class="prev-btn prev-retake" onclick="retake()">↩ Dubara Lein</button>
+            <button class="prev-btn prev-use" onclick="usePhoto()">✓ Yahi Use Karo</button>
+          </div>
         </div>
+
+        <div class="bkt tl"></div><div class="bkt tr"></div>
+        <div class="bkt bl"></div><div class="bkt br"></div>
+      </div>
+
+      <div class="act-row">
+        <button class="btn-open" id="openCamBtn" onclick="openCamera()">📷 Camera Kholo</button>
+        <button class="btn-gal" onclick="openGallery()">🖼️ Gallery</button>
+      </div>
+
+      <button class="btn-scan" id="scanBtn" onclick="startScan()" disabled>🔍 Plant Identify Karo</button>
+
+      <div class="prog-box" id="progBox">
+        <div class="spin"></div>
+        <div class="prog-txt" id="progTxt">AI tayyar ho rahi hai...</div>
+      </div>
+
+      <div class="tip">
+        <div class="tip-i">💡</div>
+        <div class="tip-t"><b>Tips:</b> Flower seedha camera mein rakhein. Shutter button se photo click karein. Achhi roshni mein best results aate hain.</div>
       </div>
     </div>
   </div>
 
-  <!-- RESULT SCREEN -->
-  <div id="s-result" class="screen">
-    <div class="result-wrap">
-      <div id="resultEmpty" style="text-align:center;padding:4rem 2rem;color:var(--text3)">
-        <div style="font-size:56px;margin-bottom:16px;opacity:0.3">🔬</div>
-        <div style="font-size:14px;line-height:1.7">Pehle Scan tab mein<br>plant ki tasveer lein</div>
+  <!-- RESULT -->
+  <div id="s-result" class="scr">
+    <div class="res-wrap">
+      <div id="resEmpty" class="res-empty">
+        <div class="res-empty-i">🔬</div>
+        <div style="font-size:13px;line-height:1.7">Pehle camera se<br>plant scan karein</div>
       </div>
-      <div id="resultMain" style="display:none">
-        <div class="result-hero">
-          <div id="heroImgWrap"></div>
-          <div class="result-overlay">
-            <div class="result-name" id="rName">—</div>
-            <div class="result-latin" id="rLatin">—</div>
+      <div id="resMain" style="display:none">
+        <div class="res-hero">
+          <div id="heroArea" class="res-img-area"></div>
+          <div class="res-ov">
+            <div class="res-name" id="rName">—</div>
+            <div class="res-latin" id="rLatin">—</div>
           </div>
-          <div class="conf-pill" id="confPill">
-            <div class="conf-bar"></div>
-            <span id="confTxt">—</span>
-          </div>
+          <div class="conf" id="confBadge"><div class="conf-d"></div><span id="confTxt">—</span></div>
         </div>
-        <div class="info-grid" id="infoGrid"></div>
-        <div class="desc-block"><p id="rDesc">—</p></div>
+        <div class="igrid" id="igrid"></div>
+        <div class="desc" id="rDesc"></div>
         <div class="tags" id="rTags"></div>
-        <div class="care-title">🌿 Parwarish Ka Tariqa</div>
+        <div class="care-lbl">🌿 Parwarish Ka Tariqa</div>
         <div class="care-row" id="careRow"></div>
-        <div class="action-row">
-          <div class="action-btn primary" onclick="saveIt()">💾 Save Karo</div>
-          <div class="action-btn" onclick="goTab('fun')">✨ Fun Mode</div>
+        <div class="ar">
+          <div class="ab pri" onclick="saveIt()">💾 Save</div>
+          <div class="ab" onclick="goTab('fun')">✨ Fun Mode</div>
+          <div class="ab" onclick="goTab('camera')">📷 New Scan</div>
         </div>
-        <div id="rawApiResult" class="desc-block" style="display:none">
-          <div style="font-size:10px;font-weight:600;letter-spacing:1px;color:var(--leaf3);text-transform:uppercase;margin-bottom:8px">API Raw Result</div>
-          <pre id="rawPre" style="font-family:'DM Mono',monospace;font-size:11px;color:rgba(240,237,228,0.5);white-space:pre-wrap;word-break:break-all"></pre>
+        <div class="api-note" id="demoNote" style="display:none">
+          <div class="an-title">🎭 Demo Mode</div>
+          <div class="an-text">Ye demo data hai. Real ML ke liye <span class="alink" onclick="openLink('https://web.plant.id/')">web.plant.id</span> se free API key lein.</div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- FUN SCREEN -->
-  <div id="s-fun" class="screen">
+  <!-- FUN -->
+  <div id="s-fun" class="scr">
     <div class="fun-wrap">
-      <div class="fun-header">
+      <div class="fun-hdr">
         <h2>Mazedaar Features ✨</h2>
-        <p id="funSubtitle">Pehle ek plant scan karein</p>
+        <p id="funSub">Pehle ek plant scan karein</p>
       </div>
-      <div class="fun-grid">
-        <div class="fun-card" onclick="funAct('poem')"><div class="fun-em">📜</div><div class="fun-name">Shayari</div><div class="fun-desc">Is plant par khoobsurat nazm</div></div>
-        <div class="fun-card" onclick="funAct('myth')"><div class="fun-em">🏺</div><div class="fun-name">Purani Kahani</div><div class="fun-desc">Taareekhi afsaney aur legends</div></div>
-        <div class="fun-card" onclick="funAct('langs')"><div class="fun-em">🌍</div><div class="fun-name">8 Zubanen</div><div class="fun-desc">Duniya bhar mein naam</div></div>
-        <div class="fun-card" onclick="funAct('quiz')"><div class="fun-em">🎯</div><div class="fun-name">Quiz</div><div class="fun-desc">Apni jankari azmaayein</div></div>
-        <div class="fun-card" onclick="funAct('zodiac')"><div class="fun-em">⭐</div><div class="fun-name">Zodyak</div><div class="fun-desc">Star sign match</div></div>
-        <div class="fun-card" onclick="funAct('recipe')"><div class="fun-em">🍵</div><div class="fun-name">Nuska / Recipe</div><div class="fun-desc">Khaane ya dawa mein use</div></div>
+      <div class="fgrid">
+        <div class="fc" onclick="fa('poem')"><div class="fc-e">📜</div><div class="fc-n">Shayari</div><div class="fc-d">Plant par khoobsurat nazm</div></div>
+        <div class="fc" onclick="fa('myth')"><div class="fc-e">🏺</div><div class="fc-n">Purani Kahani</div><div class="fc-d">Taareekhi legends</div></div>
+        <div class="fc" onclick="fa('langs')"><div class="fc-e">🌍</div><div class="fc-n">8 Zubanen</div><div class="fc-d">Duniya bhar mein naam</div></div>
+        <div class="fc" onclick="fa('quiz')"><div class="fc-e">🎯</div><div class="fc-n">Quiz</div><div class="fc-d">Apni jankari azmaayein</div></div>
+        <div class="fc" onclick="fa('zodiac')"><div class="fc-e">⭐</div><div class="fc-n">Zodyak</div><div class="fc-d">Star sign match</div></div>
+        <div class="fc" onclick="fa('recipe')"><div class="fc-e">🍵</div><div class="fc-n">Nuska</div><div class="fc-d">Khaane ya dawa mein use</div></div>
       </div>
-      <div id="funOut" class="fun-output">
-        <div class="fun-out-title" id="funOutTitle"></div>
-        <div id="funSpin" style="display:none;text-align:center;padding:1rem"><div class="spinner-ring" style="width:36px;height:36px;border-width:2px"></div></div>
-        <div id="funOutBody"></div>
+      <div class="fout" id="fout">
+        <div class="fot" id="fotTitle"></div>
+        <div id="fspin" style="display:none;text-align:center;padding:1rem"><div class="spin" style="width:32px;height:32px;border-width:2px"></div></div>
+        <div id="fbody"></div>
       </div>
     </div>
   </div>
 
-  <!-- SAVED SCREEN -->
-  <div id="s-saved" class="screen">
-    <div class="saved-wrap">
-      <div id="savedEmpty" class="saved-empty">
-        <div class="saved-empty-icon">🌱</div>
-        <div class="saved-empty-text">Aapka botanical garden<br>abhi khali hai.<br><br>Plants scan karke yahan<br>mehfooz karein!</div>
+  <!-- SAVED -->
+  <div id="s-saved" class="scr">
+    <div class="sv-wrap">
+      <div id="svEmpty" class="sv-empty">
+        <div class="sv-ei">🌱</div>
+        <div class="sv-et">Aapka botanical garden khali hai.<br>Plants scan karke yahan save karein!</div>
       </div>
-      <div id="savedGrid" class="saved-grid" style="display:none"></div>
-    </div>
-  </div>
-
-  <!-- HOW IT WORKS / SETUP -->
-  <div id="s-how" class="screen">
-    <div class="how-wrap">
-      <div class="how-header">
-        <h2>⚙️ Setup Guide</h2>
-        <p>Real ML detection ke liye Plant.id API setup karein</p>
-      </div>
-
-      <div class="api-setup">
-        <div class="api-setup-title">🔑 Free API Key Kaise Milegi</div>
-        <div class="api-step">Web.plant.id par jayen: <span class="api-link2" onclick="openLink('https://web.plant.id/')">web.plant.id</span></div>
-        <div class="api-step">Free account banayein (email se)</div>
-        <div class="api-step">Dashboard → API Keys → Create New Key</div>
-        <div class="api-step">Key copy karein aur Scan tab mein paste karein</div>
-        <div class="api-step">Free plan: 100 identifications/month</div>
-      </div>
-
-      <div class="how-step">
-        <div class="step-num">1</div>
-        <div class="step-content">
-          <h3>Tasveer Upload</h3>
-          <p>Camera ya gallery se flower/plant ki tasveer lein. App seedha base64 mein convert karta hai.</p>
-        </div>
-      </div>
-
-      <div class="how-step">
-        <div class="step-num">2</div>
-        <div class="step-content">
-          <h3>Plant.id ML API</h3>
-          <p>Tasveer Plant.id ke AI server par jaati hai jo 20,000+ plant species ko pehchanta hai.</p>
-          <code>POST api.plant.id/v2/identify</code>
-        </div>
-      </div>
-
-      <div class="how-step">
-        <div class="step-num">3</div>
-        <div class="step-content">
-          <h3>Wikipedia Data</h3>
-          <p>Plant identify hone ke baad Wikipedia API se detailed information fetch hoti hai automatically.</p>
-          <code>GET en.wikipedia.org/api/rest_v1/</code>
-        </div>
-      </div>
-
-      <div class="how-step">
-        <div class="step-num">4</div>
-        <div class="step-content">
-          <h3>Results Display</h3>
-          <p>Confidence score, scientific name, common names, aur care tips — sab real data se.</p>
-        </div>
-      </div>
-
-      <div class="how-step">
-        <div class="step-num">5</div>
-        <div class="step-content">
-          <h3>Test Mode</h3>
-          <p>API key ke bina bhi app test kar sakte hain — demo data se sab features dekhein.</p>
-        </div>
-      </div>
+      <div id="svGrid" class="sv-grid" style="display:none"></div>
     </div>
   </div>
 </div>
 
 <script>
-let currentPlant = null;
-let savedPlants = [];
-let capturedImg = null;
+let stream=null,facingMode='environment',currentPlant=null,savedPlants=[],capturedImg=null,snappedImg=null;
 
-function openLink(url){window.open(url,'_blank')}
-
-// Particles
-(function(){
-  const p=document.getElementById('particles');
-  const colors=['rgba(74,175,122,0.4)','rgba(45,122,79,0.3)','rgba(201,168,76,0.3)','rgba(125,212,168,0.2)'];
-  for(let i=0;i<18;i++){
-    const el=document.createElement('div');
-    el.className='particle';
-    const size=Math.random()*6+3;
-    el.style.cssText=`width:${size}px;height:${size}px;left:${Math.random()*100}%;background:${colors[i%colors.length]};animation-duration:${Math.random()*20+15}s;animation-delay:${Math.random()*15}s`;
-    p.appendChild(el);
-  }
-})();
+function openLink(u){window.open(u,'_blank')}
 
 function goTab(t){
-  document.querySelectorAll('.nav-tab').forEach((el,i)=>{
-    const tabs=['camera','result','fun','saved','how'];
-    el.classList.toggle('active',tabs[i]===t);
+  ['camera','result','fun','saved'].forEach((tab,i)=>{
+    document.querySelectorAll('.nt')[i].classList.toggle('active',tab===t);
+    document.getElementById('s-'+tab).classList.toggle('active',tab===t);
   });
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  document.getElementById('s-'+t).classList.add('active');
-  if(t==='fun')updateFunSubtitle();
+  if(t==='fun')document.getElementById('funSub').textContent=currentPlant?currentPlant.name+' ke baare mein explore karein':'Pehle ek plant scan karein';
   if(t==='saved')renderSaved();
+}
+
+async function openCamera(){
+  try{
+    if(stream){stream.getTracks().forEach(t=>t.stop());stream=null}
+    stream=await navigator.mediaDevices.getUserMedia({video:{facingMode,width:{ideal:1280},height:{ideal:960}}});
+    const v=document.getElementById('liveVideo');
+    v.srcObject=stream;v.style.display='block';
+    document.getElementById('camIdle').style.display='none';
+    document.getElementById('snapCanvas').style.display='none';
+    document.getElementById('galleryImg').style.display='none';
+    document.getElementById('prevOverlay').classList.remove('show');
+    document.getElementById('camLiveUI').classList.add('show');
+    document.getElementById('openCamBtn').textContent='📷 Camera Chal Raha Hai';
+    snappedImg=null;
+    document.getElementById('scanBtn').disabled=true;
+  } catch(e){
+    alert('Camera access nahi mila!\n\nBrowser mein camera permission dein ya gallery use karein.\n\nError: '+e.message);
+  }
+}
+
+async function flipCam(){
+  facingMode=facingMode==='environment'?'user':'environment';
+  await openCamera();
+}
+
+function takePhoto(){
+  const v=document.getElementById('liveVideo');
+  const c=document.getElementById('snapCanvas');
+  const hc=document.getElementById('hiddenCanvas');
+  hc.width=v.videoWidth||640;
+  hc.height=v.videoHeight||480;
+  hc.getContext('2d').drawImage(v,0,0);
+  snappedImg=hc.toDataURL('image/jpeg',0.92);
+  c.width=v.videoWidth||640;
+  c.height=v.videoHeight||480;
+  c.getContext('2d').drawImage(v,0,0);
+  c.style.display='block';
+  v.style.display='none';
+  document.getElementById('camLiveUI').classList.remove('show');
+  document.getElementById('prevOverlay').classList.add('show');
+  showFocusRing();
+  if(stream){stream.getTracks().forEach(t=>t.stop());stream=null}
+}
+
+function showFocusRing(){
+  const fr=document.getElementById('focusRing');
+  const box=document.getElementById('camBox');
+  fr.style.left=(box.clientWidth/2-40)+'px';
+  fr.style.top=(box.clientHeight/2-40)+'px';
+  fr.style.display='block';
+  setTimeout(()=>fr.style.display='none',600);
+}
+
+function retake(){
+  document.getElementById('prevOverlay').classList.remove('show');
+  document.getElementById('snapCanvas').style.display='none';
+  snappedImg=null;
+  openCamera();
+}
+
+function usePhoto(){
+  capturedImg=snappedImg;
+  document.getElementById('prevOverlay').classList.remove('show');
+  document.getElementById('camLiveUI').classList.remove('show');
+  document.getElementById('scanBtn').disabled=false;
+  updateGalleryThumb();
+}
+
+function openGallery(){
+  document.getElementById('fileIn').click();
 }
 
 document.getElementById('fileIn').addEventListener('change',function(e){
@@ -819,304 +510,199 @@ document.getElementById('fileIn').addEventListener('change',function(e){
   const reader=new FileReader();
   reader.onload=ev=>{
     capturedImg=ev.target.result;
-    const img=document.getElementById('previewImg');
-    img.src=capturedImg;img.style.display='block';
-    document.getElementById('scanOverlay').style.opacity='0.2';
+    snappedImg=null;
+    if(stream){stream.getTracks().forEach(t=>t.stop());stream=null}
+    document.getElementById('liveVideo').style.display='none';
+    document.getElementById('snapCanvas').style.display='none';
+    document.getElementById('camLiveUI').classList.remove('show');
+    document.getElementById('prevOverlay').classList.remove('show');
+    document.getElementById('camIdle').style.display='none';
+    const gi=document.getElementById('galleryImg');
+    gi.src=capturedImg;gi.style.display='block';
+    document.getElementById('scanBtn').disabled=false;
+    updateGalleryThumb();
   };
   reader.readAsDataURL(file);
   this.value='';
 });
 
-const progressMsgs=[
-  'Tasveer analyze ho rahi hai...',
-  'Neural network process kar raha hai...',
-  'Plant features extract ho rahe hain...',
-  'Species database check ho rahi hai...',
-  'Wikipedia se data fetch ho raha hai...',
-  'Confidence score calculate ho raha hai...',
-  'Nataij tayyar ho rahe hain...'
-];
+function updateGalleryThumb(){
+  if(!capturedImg)return;
+  const t=document.getElementById('galleryThumb');
+  t.src=capturedImg;t.style.display='block';
+  document.getElementById('galleryIcon').style.display='none';
+}
+
+const pmsgs=['Tasveer analyze ho rahi hai...','Neural network chal raha hai...','Plant features extract ho rahe hain...','Species database check ho rahi hai...','Wikipedia data fetch ho raha hai...','Confidence score calculate ho raha hai...','Nataij tayyar ho rahe hain...'];
 
 async function startScan(){
-  if(!capturedImg){alert('Pehle tasveer lein! 📷');return;}
-  const apiKey=document.getElementById('apiKeyInput').value.trim();
-  
+  if(!capturedImg){alert('Pehle camera se photo lein ya gallery se chunein!');return}
+  const apiKey=document.getElementById('apiKey').value.trim();
   document.getElementById('scanBeam').style.display='block';
-  document.getElementById('progressDiv').classList.add('show');
+  document.getElementById('progBox').classList.add('show');
   document.getElementById('scanBtn').disabled=true;
-  
   let pi=0;
-  const pInt=setInterval(()=>{
-    document.getElementById('progressTxt').textContent=progressMsgs[pi%progressMsgs.length];
-    pi++;
-  },900);
-
+  const piv=setInterval(()=>{document.getElementById('progTxt').textContent=pmsgs[pi++%pmsgs.length]},900);
   try{
-    let plantData;
-    if(apiKey){
-      plantData=await identifyWithPlantId(apiKey,capturedImg);
-    } else {
-      await new Promise(r=>setTimeout(r,3500));
-      plantData=getDemoPlant();
-    }
-    currentPlant=plantData;
-    renderResult(plantData);
+    let plant=apiKey?await callPlantId(apiKey,capturedImg):await demoDelay();
+    currentPlant=plant;
+    renderResult(plant);
     goTab('result');
-  } catch(err){
-    alert('Error: '+err.message+'\n\nTest mode mein try karein (API key khali chhoren)');
-  } finally {
-    clearInterval(pInt);
+  }catch(e){
+    alert('Error: '+e.message+'\n\nAPI key khali chhod kar demo mode try karein!');
+  }finally{
+    clearInterval(piv);
     document.getElementById('scanBeam').style.display='none';
-    document.getElementById('progressDiv').classList.remove('show');
+    document.getElementById('progBox').classList.remove('show');
     document.getElementById('scanBtn').disabled=false;
   }
 }
 
-async function identifyWithPlantId(apiKey, imgData){
-  const base64=imgData.split(',')[1];
-  
-  const resp=await fetch('https://api.plant.id/v2/identify',{
+async function callPlantId(key,imgData){
+  const b64=imgData.split(',')[1];
+  const res=await fetch('https://api.plant.id/v2/identify',{
     method:'POST',
-    headers:{'Content-Type':'application/json','Api-Key':apiKey},
-    body:JSON.stringify({
-      images:[base64],
-      plant_details:['common_names','url','wiki_description','taxonomy','synonyms'],
-      plant_language:'en',
-      modifiers:['crops_fast','similar_images']
-    })
+    headers:{'Content-Type':'application/json','Api-Key':key},
+    body:JSON.stringify({images:[b64],plant_details:['common_names','url','wiki_description','taxonomy'],modifiers:['crops_fast']})
   });
-  
-  if(!resp.ok){
-    const err=await resp.json();
-    throw new Error(err.message||'API Error: '+resp.status);
-  }
-  
-  const data=await resp.json();
-  const top=data.suggestions[0];
-  const details=top.plant_details;
-  
-  let wikiDesc=details.wiki_description?.value||'';
-  if(wikiDesc.length>300)wikiDesc=wikiDesc.substring(0,300)+'...';
-  
-  const taxo=details.taxonomy||{};
-  
-  return {
-    name:details.common_names?.[0]||top.plant_name,
-    latin:top.plant_name,
+  if(!res.ok){const e=await res.json();throw new Error(e.message||'API Error '+res.status)}
+  const d=await res.json();
+  const top=d.suggestions[0];
+  const det=top.plant_details;
+  const tx=det.taxonomy||{};
+  let desc=det.wiki_description?.value||'';
+  if(desc.length>280)desc=desc.substring(0,280)+'...';
+  return{
+    name:det.common_names?.[0]||top.plant_name,latin:top.plant_name,
     confidence:Math.round(top.probability*100)+'%',
     emoji:getEmoji(top.plant_name),
-    family:taxo.family||'—',
-    genus:taxo.genus||'—',
-    kingdom:taxo.kingdom||'Plantae',
-    order:taxo.order||'—',
-    desc:wikiDesc||'Ye plant successfully identify ho gaya. Detailed info ke liye Wikipedia link dekhein.',
-    tags:generateTags(top.plant_name,details),
-    care:generateCare(top.plant_name),
-    url:details.url||'',
-    isReal:true,
-    rawData:JSON.stringify(data,null,2).substring(0,800)+'...'
+    family:tx.family||'—',genus:tx.genus||'—',kingdom:tx.kingdom||'Plantae',order:tx.order||'—',
+    desc:desc||'Plant identify ho gaya!',
+    tags:makeTags(top.plant_name,det),care:makeCare(top.plant_name),isReal:true
   };
 }
 
-function getEmoji(name){
-  const n=name.toLowerCase();
+async function demoDelay(){
+  await new Promise(r=>setTimeout(r,3200));
+  return demos[Math.floor(Math.random()*demos.length)];
+}
+
+function getEmoji(n){
+  n=n.toLowerCase();
   if(n.includes('rosa')||n.includes('rose'))return'🌹';
-  if(n.includes('sunflow')||n.includes('heliant'))return'🌻';
+  if(n.includes('heliant')||n.includes('sunflow'))return'🌻';
   if(n.includes('tulip'))return'🌷';
   if(n.includes('lotus')||n.includes('nelumb'))return'🪷';
   if(n.includes('orchid'))return'🌺';
   if(n.includes('daisy')||n.includes('chrysan'))return'🌼';
   if(n.includes('cactus'))return'🌵';
-  if(n.includes('bamb'))return'🎋';
-  if(n.includes('palm'))return'🌴';
-  if(n.includes('mango'))return'🥭';
   return'🌿';
 }
 
-function generateTags(name,details){
-  const tags=[];
-  const n=name.toLowerCase();
-  if(n.includes('rosa')||n.includes('jasmin'))tags.push({t:'Khushbudar',c:'tag-g'});
-  if(details.common_names?.length>0)tags.push({t:details.common_names[0],c:'tag-a'});
-  tags.push({t:'Flowering Plant',c:'tag-g'});
-  if(n.includes('lotus')||n.includes('water'))tags.push({t:'Aquatic',c:'tag-r'});
-  if(tags.length<3)tags.push({t:'Wild Species',c:'tag-g'});
-  return tags.slice(0,4);
+function makeTags(n,det){
+  const t=[];
+  if(n.toLowerCase().includes('rosa')||n.toLowerCase().includes('jasmin'))t.push({t:'Khushbudar',c:'tg-g'});
+  if(det.common_names?.length>0)t.push({t:det.common_names[0],c:'tg-a'});
+  t.push({t:'Flowering Plant',c:'tg-g'});
+  if(t.length<3)t.push({t:'Identified by AI',c:'tg-r'});
+  return t.slice(0,4);
 }
 
-function generateCare(name){
-  const n=name.toLowerCase();
-  const water=n.includes('cactus')||n.includes('succulent')?'Mahine mein 1x':'Hafte mein 2-3x';
-  const sun=n.includes('lotus')||n.includes('water')?'Poori dhoop':'6-8 ghante';
-  const temp=n.includes('tropical')?'22-32°C':'15-28°C';
+function makeCare(n){
+  n=n.toLowerCase();
   return[
-    {e:'☀️',l:'Dhoop',v:sun},
-    {e:'💧',l:'Paani',v:water},
-    {e:'🌡️',l:'Garmi',v:temp}
+    {e:'☀️',l:'Dhoop',v:n.includes('cactus')?'Khoob dhoop':'6-8 ghante'},
+    {e:'💧',l:'Paani',v:n.includes('cactus')?'Mahine mein 1x':'Hafte mein 2-3x'},
+    {e:'🌡️',l:'Garmi',v:'18-28°C'}
   ];
 }
 
-function getDemoPlant(){
-  const demos=[
-    {name:'Rose',latin:'Rosa × hybrida',confidence:'97%',emoji:'🌹',family:'Rosaceae',genus:'Rosa',kingdom:'Plantae',order:'Rosales',desc:'Gulab ek bahuvarsheey phool wala paudha hai jo apni khoobsurati aur khushbu ke liye duniya bhar mein mashoor hai. Muhabbat aur romanticiyat ka ye sab se aam nishaan hai. Gulab ki 300 se zyada species aur 35,000 cultivars maujood hain.',tags:[{t:'Khushbudar',c:'tag-g'},{t:'Muhabbat',c:'tag-a'},{t:'Thorny',c:'tag-r'},{t:'Perennial',c:'tag-g'}],care:[{e:'☀️',l:'Dhoop',v:'6+ ghante'},{e:'💧',l:'Paani',v:'3x hafte'},{e:'🌡️',l:'Garmi',v:'15-25°C'}],poem:'Gulab ki patti mein chupta hai raaz,\nMuhabbat ki khushbu ka andaaz.\nKante hain par phir bhi haseen,\nJaise zindagi ka ek naya wiraaz.',myth:'Yunan devi Aphrodite ke aansuon se gulab pehli baar khila. Har kanta uski taklif ki nishani hai, aur har patti uski muhabbat ki.',langs:[{l:'Farsi',w:'گل سرخ'},{l:'Arabic',w:'وردة'},{l:'French',w:'La Rose'},{l:'Japanese',w:'薔薇 Bara'},{l:'Spanish',w:'La Rosa'},{l:'German',w:'Die Rose'},{l:'Chinese',w:'玫瑰 Méiguī'},{l:'Turkish',w:'Gül'}],zodiac:'♉ Taurus – Muhabbat aur khoobsurati ka sign',recipe:'Gulab ki petian chai mein dalein – stress khatam. Gulab jal (rose water) skin ke liye behtareen toner hai. Gulab ki jam aur murabba bhi banta hai.',isDemo:true},
-    {name:'Sunflower',latin:'Helianthus annuus',confidence:'94%',emoji:'🌻',family:'Asteraceae',genus:'Helianthus',kingdom:'Plantae',order:'Asterales',desc:'Surajmukhi ek qaad-avar phool wala paudha hai jo suraj ki taraf munh karta hai – ise heliotropism kehte hain. North America mein pehle khoja gaya aur aaj duniya bhar mein uski kheti hoti hai. Iski bijlian tel aur ghiza ke liye use hoti hain.',tags:[{t:'Heliotropic',c:'tag-a'},{t:'Edible Seeds',c:'tag-g'},{t:'Annual',c:'tag-g'},{t:'Oil Plant',c:'tag-a'}],care:[{e:'☀️',l:'Dhoop',v:'Poori dhoop'},{e:'💧',l:'Paani',v:'Hafte mein'},{e:'📏',l:'Qad',v:'Up to 3m'}],poem:'Surajmukhi roz suraj se milne jaata hai,\nHar subah nayi umeed laata hai.',myth:'Aztec tamaddun mein ye Tonatiuh – suraj deva – ka muqaddas phool tha. Dehkaan ise apne kheton ki hifazat ke liye ugate the.',langs:[{l:'Spanish',w:'Girasol'},{l:'French',w:'Tournesol'},{l:'Arabic',w:'عباد الشمس'},{l:'Japanese',w:'向日葵'},{l:'German',w:'Sonnenblume'},{l:'Italian',w:'Girasole'},{l:'Russian',w:'Подсолнух'},{l:'Hindi',w:'सूरजमुखी'}],zodiac:'♌ Leo – Roshni aur khushi ka sign',recipe:'Surajmukhi ke beej seedha khayen – healthy snack! Sunflower oil khana pakaane ke liye. Patte salad mein use ho sakte hain.',isDemo:true}
-  ];
-  return demos[Math.floor(Math.random()*demos.length)];
-}
+const demos=[
+  {name:'Rose',latin:'Rosa × hybrida',confidence:'97%',emoji:'🌹',family:'Rosaceae',genus:'Rosa',kingdom:'Plantae',order:'Rosales',
+   desc:'Gulab ek bahuvarsheey phool wala paudha hai jo apni khoobsurati aur khushbu ke liye duniya bhar mein mashoor hai. 300+ species aur 35,000 cultivars maujood hain.',
+   tags:[{t:'Khushbudar',c:'tg-g'},{t:'Muhabbat',c:'tg-a'},{t:'Thorny',c:'tg-r'},{t:'Perennial',c:'tg-g'}],
+   care:[{e:'☀️',l:'Dhoop',v:'6+ ghante'},{e:'💧',l:'Paani',v:'3x hafte'},{e:'🌡️',l:'Garmi',v:'15-25°C'}],
+   poem:'Gulab ki patti mein chupta hai raaz,\nMuhabbat ki khushbu ka andaaz.\nKante hain par phir bhi haseen,\nJaise zindagi ka ek naya wiraaz.',
+   myth:'Yunan devi Aphrodite ke aansuon se gulab pehli baar khila. Har kanta uski taklif ki nishani hai.',
+   langs:[{l:'Farsi',w:'گل سرخ'},{l:'Arabic',w:'وردة'},{l:'French',w:'La Rose'},{l:'Japanese',w:'薔薇 Bara'},{l:'Spanish',w:'Rosa'},{l:'German',w:'Rose'},{l:'Chinese',w:'玫瑰'},{l:'Turkish',w:'Gül'}],
+   zodiac:'♉ Taurus – Muhabbat aur khoobsurati ka sign. Gulab bilkul Taurus jaisa hai.',
+   recipe:'Gulab ki petian chai mein dalein – stress khatam. Gulab jal skin toner hai. Gulab ki jam bhi banti hai.',isDemo:true},
+  {name:'Sunflower',latin:'Helianthus annuus',confidence:'94%',emoji:'🌻',family:'Asteraceae',genus:'Helianthus',kingdom:'Plantae',order:'Asterales',
+   desc:'Surajmukhi suraj ki taraf munh karta hai – heliotropism. North America mein pehle khoja gaya. Iski bijlian tel aur ghiza ke liye use hoti hain.',
+   tags:[{t:'Heliotropic',c:'tg-a'},{t:'Edible Seeds',c:'tg-g'},{t:'Annual',c:'tg-g'},{t:'Oil Plant',c:'tg-a'}],
+   care:[{e:'☀️',l:'Dhoop',v:'Poori dhoop'},{e:'💧',l:'Paani',v:'Hafte mein'},{e:'📏',l:'Qad',v:'Up to 3m'}],
+   poem:'Surajmukhi roz suraj se milne jaata hai,\nHar subah nayi umeed laata hai.',
+   myth:'Aztec tamaddun mein ye Tonatiuh – suraj deva – ka muqaddas phool tha.',
+   langs:[{l:'Spanish',w:'Girasol'},{l:'French',w:'Tournesol'},{l:'Arabic',w:'عباد الشمس'},{l:'Japanese',w:'向日葵'},{l:'German',w:'Sonnenblume'},{l:'Italian',w:'Girasole'},{l:'Russian',w:'Подсолнух'},{l:'Hindi',w:'सूरजमुखी'}],
+   zodiac:'♌ Leo – Roshni aur khushi ka sign.',
+   recipe:'Sunflower seeds seedha khayen – healthy snack! Sunflower oil khana pakaane ke liye.',isDemo:true}
+];
 
 function renderResult(p){
-  document.getElementById('resultEmpty').style.display='none';
-  document.getElementById('resultMain').style.display='block';
-  
-  const hw=document.getElementById('heroImgWrap');
+  document.getElementById('resEmpty').style.display='none';
+  document.getElementById('resMain').style.display='block';
+  const ha=document.getElementById('heroArea');
   if(capturedImg){
-    hw.innerHTML=`<img class="result-hero-img" src="${capturedImg}">`;
+    ha.style.fontSize='0';
+    ha.innerHTML=`<img src="${capturedImg}" style="width:100%;height:100%;object-fit:cover">`;
   } else {
-    hw.innerHTML=`<div class="result-hero-emoji">${p.emoji}</div>`;
+    ha.style.fontSize='76px';ha.textContent=p.emoji;
   }
-  
   document.getElementById('rName').textContent=p.name;
   document.getElementById('rLatin').textContent=p.latin;
   document.getElementById('confTxt').textContent=p.confidence+' confidence';
   document.getElementById('rDesc').textContent=p.desc;
-  
-  const infoData=[
-    ['Family',p.family],['Genus',p.genus],
-    ['Kingdom',p.kingdom],['Order',p.order]
-  ];
-  document.getElementById('infoGrid').innerHTML=infoData.map(([l,v])=>`
-    <div class="info-cell">
-      <div class="cell-label">${l}</div>
-      <div class="cell-val">${v}</div>
-    </div>`).join('');
-  
-  document.getElementById('rTags').innerHTML=(p.tags||[]).map(t=>`<span class="tag ${t.c}">${t.t}</span>`).join('');
-  
-  document.getElementById('careRow').innerHTML=(p.care||[]).map(c=>`
-    <div class="care-card">
-      <div class="care-em">${c.e}</div>
-      <div class="care-l">${c.l}</div>
-      <div class="care-v">${c.v}</div>
-    </div>`).join('');
-  
-  if(p.isReal&&p.rawData){
-    document.getElementById('rawApiResult').style.display='block';
-    document.getElementById('rawPre').textContent=p.rawData;
-  }
-  
-  if(p.isDemo){
-    const note=document.createElement('div');
-    note.className='api-note';
-    note.style.marginTop='1rem';
-    note.innerHTML=`<div class="api-note-title">🎭 Demo Mode</div><div class="api-note-text">Ye demo data hai. Real ML ke liye Plant.id API key Setup tab mein enter karein.</div>`;
-    document.getElementById('resultMain').appendChild(note);
-  }
+  document.getElementById('igrid').innerHTML=[['Family',p.family],['Genus',p.genus],['Kingdom',p.kingdom],['Order',p.order]]
+    .map(([l,v])=>`<div class="icell"><div class="ilbl">${l}</div><div class="ival">${v}</div></div>`).join('');
+  document.getElementById('rTags').innerHTML=(p.tags||[]).map(t=>`<span class="tg ${t.c}">${t.t}</span>`).join('');
+  document.getElementById('careRow').innerHTML=(p.care||[]).map(c=>`<div class="cc"><div class="cc-e">${c.e}</div><div class="cc-l">${c.l}</div><div class="cc-v">${c.v}</div></div>`).join('');
+  document.getElementById('demoNote').style.display=p.isDemo?'block':'none';
 }
-
-function updateFunSubtitle(){
-  document.getElementById('funSubtitle').textContent=currentPlant?
-    `${currentPlant.name} ke baare mein explore karein`:
-    'Pehle ek plant scan karein';
-}
-
-function funAct(type){
-  if(!currentPlant){
-    alert('Pehle ek plant scan karein! 🌿');
-    goTab('camera');return;
-  }
-  const p=currentPlant;
-  const out=document.getElementById('funOut');
-  const title=document.getElementById('funOutTitle');
-  const body=document.getElementById('funOutBody');
-  const spin=document.getElementById('funSpin');
-  
-  out.classList.add('show');
-  spin.style.display='block';
-  body.innerHTML='';
-  
-  setTimeout(()=>{
-    spin.style.display='none';
-    if(type==='poem'){
-      title.innerHTML='📜 '+p.name+' par Shayari';
-      body.innerHTML=`<div class="poem-line">${(p.poem||generatePoem(p)).replace(/\n/g,'<br>')}</div>`;
-    } else if(type==='myth'){
-      title.innerHTML='🏺 Purani Kahani';
-      body.innerHTML=`<div class="myth-quote">${p.myth||generateMyth(p)}</div>`;
-    } else if(type==='langs'){
-      title.innerHTML='🌍 8 Zubanen Mein '+p.name;
-      const langs=p.langs||generateLangs(p);
-      body.innerHTML=`<div class="lang-grid2">${langs.map(l=>`<div class="lang-item"><div class="lang-name2">${l.l}</div><div class="lang-word2">${l.w}</div></div>`).join('')}</div>`;
-    } else if(type==='quiz'){
-      title.innerHTML='🎯 Quiz – '+p.name;
-      const qs=[
-        {q:`${p.name} ka scientific naam kya hai?`,a:p.latin},
-        {q:`${p.name} kin family se belong karta hai?`,a:p.family},
-        {q:`${p.name} ka kingdom kya hai?`,a:p.kingdom},
-        {q:`${p.name} ki identification confidence kitni hai?`,a:p.confidence}
-      ];
-      body.innerHTML=qs.map((q,i)=>`
-        <div style="margin-bottom:14px">
-          <div style="font-size:13px;font-weight:600;color:var(--cream);margin-bottom:6px">Q${i+1}. ${q.q}</div>
-          <div style="cursor:pointer;font-size:13px;color:var(--text3);padding:10px 14px;background:rgba(10,26,15,0.5);border:1px solid rgba(74,175,122,0.15);border-radius:10px;transition:all 0.3s"
-               onclick="this.style.color='var(--leaf3)';this.style.borderColor='var(--leaf2)';this.style.background='rgba(45,122,79,0.15)'">
-            Jawab dekhne ke liye tap karein → ${q.a}
-          </div>
-        </div>`).join('');
-    } else if(type==='zodiac'){
-      title.innerHTML='⭐ Zodyak Match – '+p.name;
-      const z=p.zodiac||getZodiac(p);
-      body.innerHTML=`<div style="font-size:36px;text-align:center;margin-bottom:12px">${z.split('–')[0].trim()}</div><div style="font-size:14px;line-height:1.8;color:rgba(240,237,228,0.75)">${z}</div>`;
-    } else if(type==='recipe'){
-      title.innerHTML='🍵 '+p.name+' – Nuska / Recipe';
-      body.innerHTML=`<div class="fun-body">${p.recipe||generateRecipe(p)}</div>`;
-    }
-    out.scrollIntoView({behavior:'smooth',block:'nearest'});
-  },800);
-}
-
-function generatePoem(p){
-  return `${p.name} ki khoobsurati ka koi jawab nahi,\nFizaon mein bikhri iski mehek be-hisab nahi.\nRoshan hai har subah teri raushni se ye jahan,\nAe ${p.name}, tera hi hai yahan sab se ala maqam.`;
-}
-function generateMyth(p){
-  return `Qadeem zamanon mein ${p.name} ko devtaon ka uphaar samjha jaata tha. Kahaniyan hain ke jis zameen par pehli baar ${p.name} ugaa, wahan khazana chupaaya hua tha. Aaj bhi duniya bhar ke logon mein is ki khas izzat hai.`;
-}
-function generateLangs(p){
-  return[{l:'Urdu',w:p.name},{l:'Arabic',w:p.name},{l:'French',w:p.name},{l:'Spanish',w:p.name},{l:'Japanese',w:p.name},{l:'German',w:p.name},{l:'Chinese',w:p.name},{l:'Russian',w:p.name}];
-}
-function getZodiac(p){return'🌿 Virgo – Qudrat aur khidmat ka sign. '+p.name+' Virgo ki tarah paak aur behtareen hai.';}
-function generateRecipe(p){return p.name+' kai tarah upyog hota hai. Iske patte chai ya kadhe mein dal sakte hain. Kuch logon mein ye decoration ke liye bhi use hota hai. Hamesha expert se pooch ke istemal karein kyunke kuch plants zeherile bhi ho sakte hain.';}
 
 function saveIt(){
   if(!currentPlant)return;
-  if(savedPlants.find(s=>s.latin===currentPlant.latin)){alert('Ye plant pehle se saved hai!');return;}
+  if(savedPlants.find(s=>s.latin===currentPlant.latin)){alert('Ye pehle se saved hai!');return}
   savedPlants.push({...currentPlant,img:capturedImg,savedAt:new Date().toLocaleDateString()});
-  renderSaved();
-  alert(currentPlant.name+' saved ho gaya! 💾');
+  renderSaved();alert(currentPlant.name+' saved! 💾');
 }
 
 function renderSaved(){
-  const empty=document.getElementById('savedEmpty');
-  const grid=document.getElementById('savedGrid');
-  if(!savedPlants.length){empty.style.display='block';grid.style.display='none';return;}
-  empty.style.display='none';grid.style.display='grid';
+  const e=document.getElementById('svEmpty'),g=document.getElementById('svGrid');
+  if(!savedPlants.length){e.style.display='block';g.style.display='none';return}
+  e.style.display='none';g.style.display='grid';
   const bgs=['rgba(26,61,37,0.8)','rgba(42,15,37,0.8)','rgba(37,34,15,0.8)','rgba(15,34,42,0.8)'];
-  grid.innerHTML=savedPlants.map((p,i)=>`
-    <div class="saved-card" onclick="viewSaved(${i})">
-      <div class="saved-thumb" style="background:${bgs[i%bgs.length]}">
-        ${p.img?`<img src="${p.img}" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0">`:p.emoji}
+  g.innerHTML=savedPlants.map((p,i)=>`
+    <div class="svc" onclick="viewSaved(${i})">
+      <div class="sv-thumb" style="background:${bgs[i%bgs.length]}">
+        ${p.img?`<img src="${p.img}">`:p.emoji}
       </div>
-      <div class="saved-info">
-        <div class="saved-name">${p.name}</div>
-        <div class="saved-date">${p.savedAt}</div>
-      </div>
+      <div class="sv-info"><div class="sv-name">${p.name}</div><div class="sv-date">${p.savedAt}</div></div>
     </div>`).join('');
 }
 
-function viewSaved(i){
-  currentPlant=savedPlants[i];
-  capturedImg=savedPlants[i].img||null;
-  renderResult(currentPlant);
-  goTab('result');
+function viewSaved(i){currentPlant=savedPlants[i];capturedImg=savedPlants[i].img||null;renderResult(currentPlant);goTab('result')}
+
+function fa(type){
+  if(!currentPlant){alert('Pehle plant scan karein!');goTab('camera');return}
+  const p=currentPlant;
+  const out=document.getElementById('fout'),title=document.getElementById('fotTitle'),
+    body=document.getElementById('fbody'),spin=document.getElementById('fspin');
+  out.classList.add('show');spin.style.display='block';body.innerHTML='';
+  setTimeout(()=>{
+    spin.style.display='none';
+    if(type==='poem'){title.innerHTML='📜 '+p.name+' par Shayari';body.innerHTML=`<div class="poem-txt">${(p.poem||`${p.name} ki khoobsurati ka koi jawab nahi,\nFizaon mein bikhri iski mehek be-hisab nahi.`).replace(/\n/g,'<br>')}</div>`}
+    else if(type==='myth'){title.innerHTML='🏺 Purani Kahani';body.innerHTML=`<div class="myth-q">${p.myth||p.name+' ke baare mein kai qadeem kahaniyan hain.'}</div>`}
+    else if(type==='langs'){
+      title.innerHTML='🌍 8 Zubanen Mein '+p.name;
+      const ls=p.langs||[{l:'Urdu',w:p.name},{l:'Arabic',w:p.name},{l:'French',w:p.name},{l:'Spanish',w:p.name},{l:'Japanese',w:p.name},{l:'German',w:p.name},{l:'Chinese',w:p.name},{l:'Russian',w:p.name}];
+      body.innerHTML=`<div class="lgrid">${ls.map(l=>`<div class="li"><div class="ln">${l.l}</div><div class="lw">${l.w}</div></div>`).join('')}</div>`;
+    }else if(type==='quiz'){
+      title.innerHTML='🎯 Quiz – '+p.name;
+      const qs=[{q:'Scientific naam kya hai?',a:p.latin},{q:'Family kaun si hai?',a:p.family},{q:'Kingdom kya hai?',a:p.kingdom},{q:'Confidence kitni thi?',a:p.confidence}];
+      body.innerHTML=qs.map((q,i)=>`<div style="margin-bottom:12px"><div style="font-size:13px;font-weight:600;color:var(--cream);margin-bottom:5px">Q${i+1}. ${q.q}</div><div style="cursor:pointer;font-size:12px;color:var(--text3);padding:9px 12px;background:rgba(10,26,15,0.5);border:1px solid rgba(74,175,122,0.12);border-radius:9px" onclick="this.style.color='var(--leaf3)';this.style.borderColor='var(--leaf2)';this.style.background='rgba(45,122,79,0.15)'">Tap karein → ${q.a}</div></div>`).join('');
+    }else if(type==='zodiac'){title.innerHTML='⭐ Zodyak Match';body.innerHTML=`<div style="font-size:32px;text-align:center;margin-bottom:10px">${(p.zodiac||'🌿 Virgo').split(' ')[0]}</div><div class="fbody">${p.zodiac||p.name+' – Qudrat ka nishaan.'}</div>`}
+    else if(type==='recipe'){title.innerHTML='🍵 Nuska – '+p.name;body.innerHTML=`<div class="fbody">${p.recipe||p.name+' ko kai tarah use kiya ja sakta hai. Hamesha expert se pooch ke istemal karein.'}</div>`}
+    out.scrollIntoView({behavior:'smooth',block:'nearest'});
+  },700);
 }
 </script>
-</html>
